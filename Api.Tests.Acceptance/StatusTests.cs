@@ -32,5 +32,13 @@ namespace Api.Tests.Acceptance
                 .Href,
                 Is.EqualTo(new Uri(BaseAddress, "status")));
         }
+
+        [Test]
+        public void Status_shows_current_utc_time()
+        {
+            Assert.That(_entity
+                .Properties["currentUtcTime"],
+                Is.GreaterThan(DateTime.UtcNow.AddSeconds(-1)));
+        }
     }
 }

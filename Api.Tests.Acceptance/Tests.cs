@@ -5,7 +5,7 @@ using NUnit.Framework;
 
 namespace Api.Tests.Acceptance
 {
-    internal class Tests
+    internal abstract class Tests
     {
         protected Uri BaseAddress;
         protected SirenHttpClient Client;
