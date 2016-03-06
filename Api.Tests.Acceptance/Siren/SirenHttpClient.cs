@@ -23,37 +23,32 @@ namespace Api.Tests.Acceptance.Siren
 
         public Entity Get()
         {
-            return JsonConvert.DeserializeObject<Entity>(_httpClient
-                .GetAsync(_httpClient.BaseAddress).Result
-                .Content.ReadAsStringAsync().Result);
+            return ToEntity(_httpClient.GetAsync(_httpClient.BaseAddress).Result);
         }
 
         public Entity Get(Uri uri)
         {
-            var deserializeObject = JsonConvert.DeserializeObject<Entity>(_httpClient
-                .GetAsync(uri).Result
-                .Content.ReadAsStringAsync().Result);
-
-            ApplyHttp(deserializeObject);
-
-            return deserializeObject;
+            return ToEntity(_httpClient.GetAsync(uri).Result);
         }
 
         public Entity Post(Uri uri, IDictionary<string, dynamic> form)
         {
-            var nameValueCollection = form
-                .Select(kvp => new KeyValuePair<string, string>(kvp.Key, kvp.Value.ToString()));
-
-            var deserializeObject = JsonConvert.DeserializeObject<Entity>(_httpClient
-                .PostAsync(uri, new FormUrlEncodedContent(nameValueCollection)).Result
-                .Content.ReadAsStringAsync().Result);
-
-            ApplyHttp(deserializeObject);
-
-            return deserializeObject;
+            return ToEntity(_httpClient.PostAsync(uri,
+                new FormUrlEncodedContent(form
+                    .Select(kvp => new KeyValuePair<string, string>(kvp.Key, kvp.Value.ToString())))).Result);
         }
 
-        private void ApplyHttp(Entity entity)
+        private Entity ToEntity(HttpResponseMessage httpResponseMessage)
+        {
+            var entity = JsonConvert.DeserializeObject<Entity>(httpResponseMessage
+                .Content.ReadAsStringAsync().Result);
+
+            ApplyHttpInstructions(entity);
+
+            return entity;
+        }
+
+        private void ApplyHttpInstructions(Entity entity)
         {
             var httpEntity = entity.Class.Contains("http")
                 ? entity
