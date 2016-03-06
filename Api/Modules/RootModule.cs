@@ -1,7 +1,7 @@
 ﻿using System;
+using Api.Extensions;
 using Api.Siren;
 using Microsoft.AspNet.Http;
-using Microsoft.AspNet.Http.Extensions;
 
 namespace Api.Modules
 {
@@ -13,7 +13,7 @@ namespace Api.Modules
 
         public Entity BuildEntity()
         {
-            var href = new Uri(Request.GetDisplayUrl());
+            var baseAddress = Request.GetBaseAddress();
 
             return new Entity
             {
@@ -23,17 +23,17 @@ namespace Api.Modules
                     new Link
                     {
                         Rel = new[] {"self"},
-                        Href = href
+                        Href = Request.GetAbsoluteAddress()
                     },
                     new Link
                     {
                         Rel = new[] {"items"},
-                        Href = new Uri(href, "items")
+                        Href = new Uri(baseAddress, "/items")
                     },
                     new Link
                     {
                         Rel = new[] {"status"},
-                        Href = new Uri(href, "status")
+                        Href = new Uri(baseAddress, "/status")
                     }
                 }
             };

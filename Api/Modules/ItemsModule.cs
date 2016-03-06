@@ -1,9 +1,8 @@
-using System;
 using System.Linq;
+using Api.Extensions;
 using Api.Repositories;
 using Api.Siren;
 using Microsoft.AspNet.Http;
-using Microsoft.AspNet.Http.Extensions;
 
 namespace Api.Modules
 {
@@ -19,8 +18,6 @@ namespace Api.Modules
         {
             var items = _itemRepository.Get();
 
-            var href = new Uri(Request.GetDisplayUrl());
-
             return new Entity
             {
                 Class = new[] {"items", "collection"},
@@ -31,7 +28,7 @@ namespace Api.Modules
                     new Link
                     {
                         Rel = new[] {"self"},
-                        Href = href
+                        Href = Request.GetAbsoluteAddress()
                     }
                 }
             };
