@@ -41,6 +41,7 @@ namespace Api.Modules
                     {"authorization", $"Basic {account.Token}"}
                 }
             };
+
             return new Entity
             {
                 Class = new[] {"basket", "collection"},
@@ -52,6 +53,41 @@ namespace Api.Modules
                     {
                         Rel = new[] {"self"},
                         Href = Request.GetAbsoluteAddress()
+                    },
+                    new Link
+                    {
+                        Rel = new []{"items"},
+                        Href = new Uri(Request.GetBaseAddress(), "items")
+                    }
+                }
+            };
+        }
+
+        public Entity BuildEntity()
+        {
+            StringValues stringValues;
+
+            var account = Request.Headers.TryGetValue("authorization", out stringValues)
+                ? _accountRepository.GetByToken(Guid.Parse(stringValues.First().Split(' ').Last()))
+                : _accountRepository.CreateAnonymous();
+
+            var basket = _basketRepository.GetBasket(account.Id);
+
+            return new Entity
+            {
+                Class = new[] {"basket", "collection"},
+                Entities = basket.Select(s => new ItemModule(Request, "items", s).BuildEntity()).ToArray(),
+                Links = new[]
+                {
+                    new Link
+                    {
+                        Rel = new[] {"self"},
+                        Href = Request.GetAbsoluteAddress()
+                    },
+                    new Link
+                    {
+                        Rel = new []{"items"},
+                        Href = new Uri(Request.GetBaseAddress(), "items")
                     }
                 }
             };

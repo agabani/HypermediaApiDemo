@@ -8,6 +8,12 @@ namespace Api.Controllers
     [Route("[controller]")]
     public class BasketController : Controller
     {
+        [HttpGet]
+        public Entity Get()
+        {
+            return new BasketModule(Request).BuildEntity();
+        }
+
         [HttpPost]
         public Entity Post(BasketAddModel model)
         {

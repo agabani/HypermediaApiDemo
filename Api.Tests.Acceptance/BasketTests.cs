@@ -35,10 +35,16 @@ namespace Api.Tests.Acceptance
             Assert.That(basketEntity.Class.Contains("basket"));
             Assert.That(basketEntity.Class.Contains("collection"));
 
-            Assert.That(basketEntity
+            var basketHref = basketEntity
                 .Links.Single(link => link.Rel.Contains("self"))
+                .Href;
+
+            Assert.That(basketHref, Is.EqualTo(new Uri(BaseAddress, "basket")));
+
+            Assert.That(basketEntity
+                .Links.Single(link => link.Rel.Contains("items"))
                 .Href,
-                Is.EqualTo(new Uri(BaseAddress, "basket")));
+                Is.EqualTo(new Uri(BaseAddress, "items")));
 
             var itemEntity = basketEntity
                 .Entities.Single(e => e.Class.Contains("item"));
@@ -56,6 +62,17 @@ namespace Api.Tests.Acceptance
 
             Assert.That(authorization.First(), Is.EqualTo("Basic"));
             Assert.That(Guid.Parse(authorization.Last()), Is.Not.EqualTo(default(Guid)));
+
+            basketEntity = Client.Get(basketHref);
+
+            Assert.That(basketEntity
+                .Entities.SingleOrDefault(e => e.Class.Contains("http")),
+                Is.Null);
+
+            Assert.That(basketEntity
+                .Links.Single(link => link.Rel.Contains("items"))
+                .Href,
+                Is.EqualTo(new Uri(BaseAddress, "items")));
         }
     }
 }
