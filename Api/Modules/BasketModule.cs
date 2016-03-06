@@ -1,5 +1,6 @@
 using System;
 using Api.Siren;
+using Api.ViewModels;
 using Microsoft.AspNet.Http;
 using Microsoft.AspNet.Http.Extensions;
 
@@ -11,7 +12,7 @@ namespace Api.Modules
         {
         }
 
-        public Entity BuildEntity()
+        public Entity BuildEntity(BasketAddModel model)
         {
             var href = new Uri(Request.GetDisplayUrl());
 
@@ -25,6 +26,10 @@ namespace Api.Modules
                         Rel = new[] {"self"},
                         Href = href
                     }
+                },
+                Entities = new[]
+                {
+                    new ItemModule(Request, "items", model.Id).BuildEntity()
                 }
             };
         }
