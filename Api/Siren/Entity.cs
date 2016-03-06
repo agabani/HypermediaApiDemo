@@ -8,5 +8,6 @@ namespace Api.Siren
         public Dictionary<string, dynamic> Properties { get; set; }
         public Entity[] Entities { get; set; }
         public Link[] Links { get; set; }
+        public Action[] Actions { get; set; }
     }
 }

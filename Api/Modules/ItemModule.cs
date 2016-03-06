@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Api.Siren;
 using Microsoft.AspNet.Http;
 using Microsoft.AspNet.Http.Extensions;
+using Action = Api.Siren.Action;
 
 namespace Api.Modules
 {
@@ -10,17 +11,20 @@ namespace Api.Modules
     {
         private readonly Uri _href;
         private readonly string _id;
+        private readonly bool _anemic;
 
         public ItemModule(HttpRequest request, string path, string id) : base(request)
         {
             _id = id;
             _href = new Uri($"{request.Scheme}://{request.Host.Value}/{path}/{id}");
+            _anemic = true;
         }
 
         public ItemModule(HttpRequest request, string id) : base(request)
         {
             _href = new Uri(Request.GetDisplayUrl());
             _id = id;
+            _anemic = false;
         }
 
         public override Entity BuildEntity()
@@ -39,6 +43,26 @@ namespace Api.Modules
                     {
                         Rel = new[] {"self"},
                         Href = _href
+                    }
+                },
+                Actions = _anemic ? null : new []
+                {
+                    new Action
+                    {
+                        Name = "basket-add",
+                        Href = new Uri(_href, "/basket"),
+                        Method = "POST",
+                        Type = "application/x-www-form-urlencoded",
+                        Fields = new []
+                        {
+                            new Field
+                            {
+                                Type = "text",
+                                Name = "id",
+                                Value = _id
+                            }
+                        },
+                        Title = "Add to basket"
                     }
                 }
             };

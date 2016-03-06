@@ -44,5 +44,21 @@ namespace Api.Tests.Acceptance
             Assert.That(_entity.Properties.Single(property => property.Key == "id").Value, Is.EqualTo("A"));
             Assert.That(_entity.Properties.Single(property => property.Key == "value").Value, Is.EqualTo(50d));
         }
+
+        [Test]
+        public void Item_has_basket_actions()
+        {
+            var action = _entity
+                .Actions.Single(a => a.Name.Equals("basket-add"));
+
+            Assert.That(action.Href, Is.EqualTo(new Uri(BaseAddress, "basket")));
+            Assert.That(action.Fields.Single().Name, Is.EqualTo("id"));
+            Assert.That(action.Fields.Single().Type, Is.EqualTo("text"));
+            Assert.That(action.Fields.Single().Value, Is.EqualTo("A"));
+            Assert.That(action.Method, Is.EqualTo("POST"));
+            Assert.That(action.Name, Is.EqualTo("basket-add"));
+            Assert.That(action.Title, Is.EqualTo("Add to basket"));
+            Assert.That(action.Type, Is.EqualTo("application/x-www-form-urlencoded"));
+        }
     }
 }
