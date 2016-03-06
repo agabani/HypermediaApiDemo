@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using Newtonsoft.Json;
 
@@ -30,6 +32,16 @@ namespace Api.Tests.Acceptance.Siren
         {
             return JsonConvert.DeserializeObject<Entity>(_httpClient
                 .GetAsync(uri).Result
+                .Content.ReadAsStringAsync().Result);
+        }
+
+        public Entity Post(Uri uri, IDictionary<string, dynamic> form)
+        {
+            var nameValueCollection = form
+                .Select(kvp => new KeyValuePair<string, string>(kvp.Key, kvp.Value.ToString()));
+
+            return JsonConvert.DeserializeObject<Entity>(_httpClient
+                .PostAsync(uri, new FormUrlEncodedContent(nameValueCollection)).Result
                 .Content.ReadAsStringAsync().Result);
         }
 
