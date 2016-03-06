@@ -21,6 +21,7 @@ namespace Api.Modules
                 {
                     {"currentUtcTime", DateTime.UtcNow}
                 },
+                Entities = new Entity[] {},
                 Links = new[]
                 {
                     new Link

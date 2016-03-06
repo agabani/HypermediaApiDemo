@@ -18,6 +18,7 @@ namespace Api.Modules
             return new Entity
             {
                 Class = new[] {"root"},
+                Entities = new Entity[] {},
                 Links = new[]
                 {
                     new Link

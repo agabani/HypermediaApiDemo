@@ -26,28 +26,30 @@ namespace Api.Tests.Acceptance
         [Test]
         public void Should_add_to_basket()
         {
-            var action = _itemAEntity
+            var basketAddAction = _itemAEntity
                 .Actions.Single(a => a.Name.Equals("basket-add"));
 
-            var entity = Client.Post(action.Href, action
+            var basketEntity = Client.Post(basketAddAction.Href, basketAddAction
                 .Fields.ToDictionary(field => field.Name, field => field.Value));
 
-            Assert.That(entity.Class.Contains("basket"));
-            Assert.That(entity.Class.Contains("collection"));
+            Assert.That(basketEntity.Class.Contains("basket"));
+            Assert.That(basketEntity.Class.Contains("collection"));
 
-            Assert.That(entity
+            Assert.That(basketEntity
                 .Links.Single(link => link.Rel.Contains("self"))
                 .Href,
                 Is.EqualTo(new Uri(BaseAddress, "basket")));
 
-            var itemEntity = entity
+            var itemEntity = basketEntity
                 .Entities.Single(e => e.Class.Contains("item"));
 
             Assert.That(itemEntity
                 .Properties.Contains(new KeyValuePair<string, dynamic>("id", "A")));
 
-            var authorization = ((string)entity
-                .Entities.Single(e => e.Class.Contains("http"))
+            var httpEntity = basketEntity
+                .Entities.Single(e => e.Class.Contains("http"));
+
+            var authorization = ((string)httpEntity
                 .Properties.Single(pair => pair.Key == "authorization")
                 .Value)
                 .Split(' ');

@@ -41,10 +41,11 @@ namespace Api.Modules
                     {"authorization", $"Basic {account.Token}"}
                 }
             };
-
             return new Entity
             {
                 Class = new[] {"basket", "collection"},
+                Entities =
+                    stringValues == default(StringValues) ? new[] {httpEntity}.Concat(entities).ToArray() : entities,
                 Links = new[]
                 {
                     new Link
@@ -52,8 +53,7 @@ namespace Api.Modules
                         Rel = new[] {"self"},
                         Href = Request.GetAbsoluteAddress()
                     }
-                },
-                Entities = stringValues == default(StringValues) ? new[] {httpEntity}.Concat(entities).ToArray() : entities
+                }
             };
         }
     }

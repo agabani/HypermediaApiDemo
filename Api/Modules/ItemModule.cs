@@ -42,6 +42,7 @@ namespace Api.Modules
                     {"id", item.Id},
                     {"value", item.Value}
                 },
+                Entities = new Entity[] { },
                 Links = new[]
                 {
                     new Link

@@ -30,9 +30,13 @@ namespace Api.Tests.Acceptance.Siren
 
         public Entity Get(Uri uri)
         {
-            return JsonConvert.DeserializeObject<Entity>(_httpClient
+            var deserializeObject = JsonConvert.DeserializeObject<Entity>(_httpClient
                 .GetAsync(uri).Result
                 .Content.ReadAsStringAsync().Result);
+
+            ApplyHttp(deserializeObject);
+
+            return deserializeObject;
         }
 
         public Entity Post(Uri uri, IDictionary<string, dynamic> form)
@@ -40,9 +44,30 @@ namespace Api.Tests.Acceptance.Siren
             var nameValueCollection = form
                 .Select(kvp => new KeyValuePair<string, string>(kvp.Key, kvp.Value.ToString()));
 
-            return JsonConvert.DeserializeObject<Entity>(_httpClient
+            var deserializeObject = JsonConvert.DeserializeObject<Entity>(_httpClient
                 .PostAsync(uri, new FormUrlEncodedContent(nameValueCollection)).Result
                 .Content.ReadAsStringAsync().Result);
+
+            ApplyHttp(deserializeObject);
+
+            return deserializeObject;
+        }
+
+        private void ApplyHttp(Entity entity)
+        {
+            var httpEntity = entity.Class.Contains("http")
+                ? entity
+                : entity.Entities.FirstOrDefault(e => e.Class.Contains("http"));
+
+            if (httpEntity == null)
+            {
+                return;
+            }
+
+            foreach (var property in httpEntity.Properties)
+            {
+                _httpClient.DefaultRequestHeaders.Add(property.Key, property.Value);
+            }
         }
 
         protected virtual void Dispose(bool dispoing)
