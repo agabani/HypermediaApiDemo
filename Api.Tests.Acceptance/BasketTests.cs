@@ -34,17 +34,26 @@ namespace Api.Tests.Acceptance
 
             Assert.That(entity.Class.Contains("basket"));
             Assert.That(entity.Class.Contains("collection"));
+
             Assert.That(entity
                 .Links.Single(link => link.Rel.Contains("self"))
                 .Href,
                 Is.EqualTo(new Uri(BaseAddress, "basket")));
 
-            var single = entity
-                .Entities.Single(item =>
-                    item.Class.Contains("item"));
+            var itemEntity = entity
+                .Entities.Single(e => e.Class.Contains("item"));
 
-            Assert.That(single
+            Assert.That(itemEntity
                 .Properties.Contains(new KeyValuePair<string, dynamic>("id", "A")));
+
+            var authorization = ((string)entity
+                .Entities.Single(e => e.Class.Contains("http"))
+                .Properties.Single(pair => pair.Key == "authorization")
+                .Value)
+                .Split(' ');
+
+            Assert.That(authorization.First(), Is.EqualTo("Basic"));
+            Assert.That(Guid.Parse(authorization.Last()), Is.Not.EqualTo(default(Guid)));
         }
     }
 }
