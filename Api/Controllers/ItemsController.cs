@@ -12,5 +12,11 @@ namespace Api.Controllers
         {
             return new ItemsModule(Request).BuildEntity();
         }
+
+        [HttpGet("{id}")]
+        public Entity Get(string id)
+        {
+            return new ItemModule(Request, id).BuildEntity();
+        }
     }
 }

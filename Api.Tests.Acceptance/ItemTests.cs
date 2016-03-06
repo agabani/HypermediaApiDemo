@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Api.Tests.Acceptance.Siren;
@@ -15,45 +15,34 @@ namespace Api.Tests.Acceptance
         {
             var root = Client.Get();
             var itemsHref = root.Links.Single(link => link.Rel.Contains("items")).Href;
-            _entity = Client.Get(itemsHref);
+            var items = Client.Get(itemsHref);
+            var itemAHref = items
+                .Entities.Single(entity => entity.Properties.Contains(new KeyValuePair<string, dynamic>("id", "A")))
+                .Links.Single(link => link.Rel.Contains("self"))
+                .Href;
+            _entity = Client.Get(itemAHref);
         }
 
         [Test]
-        public void Items_class()
+        public void Item_class()
         {
-            Assert.That(_entity.Class.Contains("items"));
-            Assert.That(_entity.Class.Contains("collection"));
+            Assert.That(_entity.Class.Contains("item"));
         }
 
         [Test]
-        public void Items_links_to_self()
+        public void Item_links_to_self()
         {
             Assert.That(_entity
                 .Links.Single(link => link.Rel.Contains("self"))
                 .Href,
-                Is.EqualTo(new Uri(BaseAddress, "items")));
+                Is.EqualTo(new Uri(BaseAddress, "items/A")));
         }
 
         [Test]
-        [TestCase("A", 50d)]
-        [TestCase("B", 30d)]
-        [TestCase("C", 20d)]
-        [TestCase("D", 15d)]
-        public void Items_should_contain_item_collection(string id, double value)
+        public void Item_has_properties()
         {
-            Assert.That(_entity.Entities, Is.Not.Empty);
-
-            var item = _entity
-                .Entities.Single(entity => entity.Properties.Contains(new KeyValuePair<string, dynamic>("id", id)));
-
-            Assert.That(item.Class.Contains("item"));
-
-            Assert.That(item
-                .Links.Single(link => link.Rel.Contains("self"))
-                .Href,
-                Is.EqualTo(new Uri(BaseAddress, $"items/{id}")));
-
-            Assert.That(item.Properties["value"], Is.EqualTo(value));
+            Assert.That(_entity.Properties.Single(property => property.Key == "id").Value, Is.EqualTo("A"));
+            Assert.That(_entity.Properties.Single(property => property.Key == "value").Value, Is.EqualTo(50d));
         }
     }
 }
