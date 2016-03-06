@@ -39,5 +39,14 @@ namespace Api.Tests.Acceptance
                 .Href,
                 Is.EqualTo(new Uri(BaseAddress, "status")));
         }
+
+        [Test]
+        public void Root_links_to_items()
+        {
+            Assert.That(_entity
+                .Links.Single(link => link.Rel.Contains("items"))
+                .Href,
+                Is.EqualTo(new Uri(BaseAddress, "items")));
+        }
     }
 }

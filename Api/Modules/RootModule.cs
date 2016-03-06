@@ -27,6 +27,11 @@ namespace Api.Modules
                     },
                     new Link
                     {
+                        Rel = new[] {"items"},
+                        Href = new Uri(href, "items")
+                    },
+                    new Link
+                    {
                         Rel = new[] {"status"},
                         Href = new Uri(href, "status")
                     }
