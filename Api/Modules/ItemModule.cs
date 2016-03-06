@@ -8,17 +8,23 @@ namespace Api.Modules
 {
     public class ItemModule : Module
     {
+        private readonly Uri _href;
         private readonly string _id;
+
+        public ItemModule(HttpRequest request, string path, string id) : base(request)
+        {
+            _id = id;
+            _href = new Uri($"{request.Scheme}://{request.Host.Value}/{path}/{id}");
+        }
 
         public ItemModule(HttpRequest request, string id) : base(request)
         {
+            _href = new Uri(Request.GetDisplayUrl());
             _id = id;
         }
 
         public override Entity BuildEntity()
         {
-            var href = new Uri(Request.GetDisplayUrl());
-
             return new Entity
             {
                 Class = new[] {"item"},
@@ -32,7 +38,7 @@ namespace Api.Modules
                     new Link
                     {
                         Rel = new[] {"self"},
-                        Href = href
+                        Href = _href
                     }
                 }
             };
