@@ -27,7 +27,7 @@ namespace Api.Modules
             _anemic = false;
         }
 
-        public override Entity BuildEntity()
+        public Entity BuildEntity()
         {
             return new Entity
             {

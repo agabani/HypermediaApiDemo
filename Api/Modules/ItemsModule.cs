@@ -11,7 +11,7 @@ namespace Api.Modules
         {
         }
 
-        public override Entity BuildEntity()
+        public Entity BuildEntity()
         {
             var href = new Uri(Request.GetDisplayUrl());
 

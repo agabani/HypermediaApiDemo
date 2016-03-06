@@ -1,4 +1,3 @@
-using Api.Siren;
 using Microsoft.AspNet.Http;
 
 namespace Api.Modules
@@ -11,7 +10,5 @@ namespace Api.Modules
         {
             Request = request;
         }
-
-        public abstract Entity BuildEntity();
     }
 }
