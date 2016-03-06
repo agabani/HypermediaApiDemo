@@ -4,7 +4,7 @@ using Microsoft.AspNet.Mvc;
 
 namespace Api.Controllers
 {
-    [Route("status")]
+    [Route("[controller]")]
     public class StatusController : Controller
     {
         [HttpGet]
