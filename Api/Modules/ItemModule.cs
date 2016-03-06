@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Api.Repositories;
 using Api.Siren;
 using Microsoft.AspNet.Http;
 using Microsoft.AspNet.Http.Extensions;
@@ -9,9 +10,11 @@ namespace Api.Modules
 {
     public class ItemModule : Module
     {
+        private readonly bool _anemic;
         private readonly Uri _href;
         private readonly string _id;
-        private readonly bool _anemic;
+
+        private readonly ItemRepository _itemRepository = new ItemRepository();
 
         public ItemModule(HttpRequest request, string path, string id) : base(request)
         {
@@ -29,13 +32,15 @@ namespace Api.Modules
 
         public Entity BuildEntity()
         {
+            var item = _itemRepository.Get(_id);
+
             return new Entity
             {
                 Class = new[] {"item"},
                 Properties = new Dictionary<string, dynamic>
                 {
-                    {"id", _id},
-                    {"value", Value(_id)}
+                    {"id", item.Id},
+                    {"value", item.Value}
                 },
                 Links = new[]
                 {
@@ -45,44 +50,29 @@ namespace Api.Modules
                         Href = _href
                     }
                 },
-                Actions = _anemic ? null : new []
-                {
-                    new Action
+                Actions = _anemic
+                    ? null
+                    : new[]
                     {
-                        Name = "basket-add",
-                        Href = new Uri(_href, "/basket"),
-                        Method = "POST",
-                        Type = "application/x-www-form-urlencoded",
-                        Fields = new []
+                        new Action
                         {
-                            new Field
+                            Name = "basket-add",
+                            Href = new Uri(_href, "/basket"),
+                            Method = "POST",
+                            Type = "application/x-www-form-urlencoded",
+                            Fields = new[]
                             {
-                                Type = "text",
-                                Name = "id",
-                                Value = _id
-                            }
-                        },
-                        Title = "Add to basket"
+                                new Field
+                                {
+                                    Type = "text",
+                                    Name = "id",
+                                    Value = item.Id
+                                }
+                            },
+                            Title = "Add to basket"
+                        }
                     }
-                }
             };
-        }
-
-        private static double Value(string id)
-        {
-            switch (id)
-            {
-                case "A":
-                    return 50d;
-                case "B":
-                    return 30d;
-                case "C":
-                    return 20d;
-                case "D":
-                    return 15d;
-                default:
-                    throw new ArgumentNullException();
-            }
         }
     }
 }
