@@ -54,6 +54,8 @@
     <Compile Include="Siren\Field.cs" />
     <Compile Include="Siren\Link.cs" />
     <Compile Include="Siren\SirenHttpClient.cs" />
+    <Compile Include="RootTests.cs" />
+    <Compile Include="StatusTests.cs" />
     <Compile Include="Tests.cs" />
   </ItemGroup>
   <ItemGroup>

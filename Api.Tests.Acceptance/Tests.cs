@@ -1,35 +1,30 @@
-﻿using System;
+using System;
 using System.Net.Http;
 using Api.Tests.Acceptance.Siren;
 using NUnit.Framework;
 
 namespace Api.Tests.Acceptance
 {
-    [TestFixture]
-    public class Tests
+    internal class Tests
     {
-        [SetUp]
-        public void SetUp()
+        protected Uri BaseAddress;
+        protected SirenHttpClient Client;
+
+        [OneTimeSetUp]
+        public void OneTimeSetUp()
         {
-            _client = new SirenHttpClient(new HttpClient
+            BaseAddress = new Uri("http://localhost:5000");
+            Client = new SirenHttpClient(new HttpClient
             {
-                BaseAddress = new Uri("http://localhost:5000")
+                BaseAddress = BaseAddress
             });
         }
 
-        [TearDown]
-        public void TearDown()
+        [OneTimeTearDown]
+        public void OneTimeTearDown()
         {
-            _client.Dispose();
-            _client = null;
-        }
-
-        private SirenHttpClient _client;
-
-        [Test]
-        public void Should_be_able_to_connect()
-        {
-            _client.Get();
+            Client.Dispose();
+            Client = null;
         }
     }
 }
