@@ -11,47 +11,62 @@ namespace Api.Tests.Acceptance
     internal class ItemJourneyTest : JourneyTests
     {
         [SetUp]
-        public new void OneTimeSetUp()
+        public void SetUp()
         {
-            using (var sirenJourney = new SirenJourney(new SirenHttpClient(new HttpClient
+            _sirenJourney = new SirenJourney(new SirenHttpClient(new HttpClient
             {
                 BaseAddress = BaseAddress
-            })))
-            {
-                _entity = sirenJourney
-                    .FollowLink(link => link.Rel.Contains("items"))
-                    .FollowEntityLink(e => e.Properties.Contains(new KeyValuePair<string, dynamic>("id", "A")))
-                    .Travel();
-            }
+            }))
+                .FollowLink(link => link.Rel.Contains("items"));
+        }
+
+        [TearDown]
+        public void TearDown()
+        {
+            _sirenJourney.Dispose();
+            _sirenJourney = null;
         }
 
         private Entity _entity;
+        private SirenJourney _sirenJourney;
 
         [Test]
-        public void Item_class()
+        [TestCase("A", 50d)]
+        [TestCase("B", 30d)]
+        [TestCase("C", 20d)]
+        [TestCase("D", 15d)]
+        public void Item_Test(string id, double value)
+        {
+            _entity = _sirenJourney
+                .FollowEntityLink(entity => entity.Properties.Contains(new KeyValuePair<string, dynamic>("id", id)))
+                .Travel();
+
+            Has_class();
+            Has_link_to_self(id);
+            Has_properties(id, value);
+            Has_basket_actions(id);
+        }
+
+        private void Has_class()
         {
             Assert.That(_entity.Class.Contains("item"));
         }
 
-
-        [Test]
-        public void Item_links_to_self()
+        private void Has_link_to_self(string id)
         {
             Assert.That(_entity
                 .Links.Single(link => link.Rel.Contains("self"))
                 .Href,
-                Is.EqualTo(new Uri(BaseAddress, "items/A")));
+                Is.EqualTo(new Uri(BaseAddress, $"items/{id}")));
         }
 
-        [Test]
-        public void Item_has_properties()
+        private void Has_properties(string id, double value)
         {
-            Assert.That(_entity.Properties.Single(property => property.Key == "id").Value, Is.EqualTo("A"));
-            Assert.That(_entity.Properties.Single(property => property.Key == "value").Value, Is.EqualTo(50d));
+            Assert.That(_entity.Properties.Single(property => property.Key == "id").Value, Is.EqualTo(id));
+            Assert.That(_entity.Properties.Single(property => property.Key == "value").Value, Is.EqualTo(value));
         }
 
-        [Test]
-        public void Item_has_basket_actions()
+        private void Has_basket_actions(string id)
         {
             var action = _entity
                 .Actions.Single(a => a.Name.Equals("basket-add"));
@@ -59,7 +74,7 @@ namespace Api.Tests.Acceptance
             Assert.That(action.Href, Is.EqualTo(new Uri(BaseAddress, "basket")));
             Assert.That(action.Fields.Single().Name, Is.EqualTo("id"));
             Assert.That(action.Fields.Single().Type, Is.EqualTo("text"));
-            Assert.That(action.Fields.Single().Value, Is.EqualTo("A"));
+            Assert.That(action.Fields.Single().Value, Is.EqualTo(id));
             Assert.That(action.Method, Is.EqualTo("POST"));
             Assert.That(action.Name, Is.EqualTo("basket-add"));
             Assert.That(action.Title, Is.EqualTo("Add to basket"));
