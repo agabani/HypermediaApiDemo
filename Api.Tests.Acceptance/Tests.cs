@@ -3,7 +3,7 @@ using NUnit.Framework;
 
 namespace Api.Tests.Acceptance
 {
-    internal class JourneyTests
+    internal class Tests
     {
         protected Uri BaseAddress;
 

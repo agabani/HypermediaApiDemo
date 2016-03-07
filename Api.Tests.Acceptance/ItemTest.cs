@@ -8,7 +8,7 @@ using NUnit.Framework;
 namespace Api.Tests.Acceptance
 {
     [TestFixture]
-    internal class ItemJourneyTest : JourneyTests
+    internal class ItemTest : Tests
     {
         [SetUp]
         public void SetUp()

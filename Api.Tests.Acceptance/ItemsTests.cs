@@ -8,7 +8,7 @@ using NUnit.Framework;
 namespace Api.Tests.Acceptance
 {
     [TestFixture]
-    internal class ItemsJourneyTests : JourneyTests
+    internal class ItemsTests : Tests
     {
         private Entity _entity;
 
