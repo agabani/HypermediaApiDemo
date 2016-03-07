@@ -21,7 +21,7 @@ namespace Api.Tests.Acceptance
             }));
 
             _entity = sirenJourney
-                .FollowLink("items")
+                .FollowLink(link => link.Rel.Contains("items"))
                 .Travel();
         }
 

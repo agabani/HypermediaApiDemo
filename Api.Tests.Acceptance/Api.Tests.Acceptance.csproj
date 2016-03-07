@@ -49,6 +49,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BasketTests.cs" />
+    <Compile Include="ItemJourneyTest.cs" />
     <Compile Include="ItemsJourneyTests.cs" />
     <Compile Include="ItemTests.cs" />
     <Compile Include="JourneyTests.cs" />

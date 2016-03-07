@@ -1,33 +1,38 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using Api.Tests.Acceptance.Siren;
 using NUnit.Framework;
 
 namespace Api.Tests.Acceptance
 {
-    internal class ItemTests : Tests
+    [TestFixture]
+    internal class ItemJourneyTest : JourneyTests
     {
-        private Entity _entity;
-
-        [OneTimeSetUp]
+        [SetUp]
         public new void OneTimeSetUp()
         {
-            var root = Client.Get();
-            var itemsHref = root.Links.Single(link => link.Rel.Contains("items")).Href;
-            var items = Client.Get(itemsHref);
-            var itemAHref = items
-                .Entities.Single(entity => entity.Properties.Contains(new KeyValuePair<string, dynamic>("id", "A")))
-                .Links.Single(link => link.Rel.Contains("self"))
-                .Href;
-            _entity = Client.Get(itemAHref);
+            using (var sirenJourney = new SirenJourney(new SirenHttpClient(new HttpClient
+            {
+                BaseAddress = BaseAddress
+            })))
+            {
+                _entity = sirenJourney
+                    .FollowLink(link => link.Rel.Contains("items"))
+                    .FollowEntityLink(e => e.Properties.Contains(new KeyValuePair<string, dynamic>("id", "A")))
+                    .Travel();
+            }
         }
+
+        private Entity _entity;
 
         [Test]
         public void Item_class()
         {
             Assert.That(_entity.Class.Contains("item"));
         }
+
 
         [Test]
         public void Item_links_to_self()

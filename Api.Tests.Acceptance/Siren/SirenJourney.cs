@@ -6,8 +6,8 @@ namespace Api.Tests.Acceptance.Siren
 {
     internal class SirenJourney : IDisposable
     {
+        private readonly List<Journey> _links = new List<Journey>();
         private SirenHttpClient _client;
-        private readonly List<JourneyLink> _links = new List<JourneyLink>();
 
         public SirenJourney(SirenHttpClient client)
         {
@@ -25,9 +25,15 @@ namespace Api.Tests.Acceptance.Siren
             return this;
         }
 
-        public SirenJourney FollowLink(string relation)
+        public SirenJourney FollowLink(Func<Link, bool> predicate)
         {
-            _links.Add(new JourneyLink(relation));
+            _links.Add(new JourneyLink(predicate));
+            return this;
+        }
+
+        public SirenJourney FollowEntityLink(Func<Entity, bool> predicate)
+        {
+            _links.Add(new JourneyEntityLink(predicate));
             return this;
         }
 
@@ -55,18 +61,42 @@ namespace Api.Tests.Acceptance.Siren
             }
         }
 
-        public class JourneyLink
+        private abstract class Journey
         {
-            private readonly string _relation;
+            public abstract Entity Travel(SirenHttpClient client, Entity entity);
+        }
 
-            public JourneyLink(string relation)
+        private class JourneyLink : Journey
+        {
+            private readonly Func<Link, bool> _predicate;
+
+            public JourneyLink(Func<Link, bool> predicate)
             {
-                _relation = relation;
+                _predicate = predicate;
             }
 
-            public Entity Travel(SirenHttpClient client, Entity entity)
+            public override Entity Travel(SirenHttpClient client, Entity entity)
             {
-                return client.Get(entity.Links.Single(link => link.Rel.Contains(_relation)).Href);
+                return client.Get(entity.Links.Single(_predicate).Href);
+            }
+        }
+
+        private class JourneyEntityLink : Journey
+        {
+            private readonly Func<Entity, bool> _predicate;
+
+            public JourneyEntityLink(Func<Entity, bool> predicate)
+            {
+                _predicate = predicate;
+            }
+
+            public override Entity Travel(SirenHttpClient client, Entity entity)
+            {
+                var href = entity.Entities.Single(_predicate)
+                    .Links.Single(link => link.Rel.Contains("self"))
+                    .Href;
+
+                return client.Get(href);
             }
         }
     }

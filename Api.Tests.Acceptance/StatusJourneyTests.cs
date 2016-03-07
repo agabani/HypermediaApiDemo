@@ -6,6 +6,7 @@ using NUnit.Framework;
 
 namespace Api.Tests.Acceptance
 {
+    [TestFixture]
     internal class StatusJourneyTests : JourneyTests
     {
         private Entity _entity;
@@ -19,7 +20,7 @@ namespace Api.Tests.Acceptance
             }));
 
             _entity = sirenJourney
-                .FollowLink("status")
+                .FollowLink(link => link.Rel.Contains("status"))
                 .Travel();
         }
 
