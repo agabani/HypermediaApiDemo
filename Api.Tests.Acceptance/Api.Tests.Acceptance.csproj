@@ -48,7 +48,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BasketTests.cs" />
+    <Compile Include="BasketJourneyTests.cs" />
     <Compile Include="ItemJourneyTest.cs" />
     <Compile Include="ItemsJourneyTests.cs" />
     <Compile Include="JourneyTests.cs" />
@@ -61,7 +61,6 @@
     <Compile Include="Siren\SirenHttpClient.cs" />
     <Compile Include="Siren\SirenJourney.cs" />
     <Compile Include="StatusJourneyTests.cs" />
-    <Compile Include="Tests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

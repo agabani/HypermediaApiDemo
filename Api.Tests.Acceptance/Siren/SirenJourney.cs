@@ -20,8 +20,9 @@ namespace Api.Tests.Acceptance.Siren
             GC.SuppressFinalize(this);
         }
 
-        public SirenJourney FollowAction(string relation)
+        public SirenJourney FollowAction(Func<Action, bool> predicate)
         {
+            _links.Add(new JourneyAction(predicate));
             return this;
         }
 
@@ -97,6 +98,24 @@ namespace Api.Tests.Acceptance.Siren
                     .Href;
 
                 return client.Get(href);
+            }
+        }
+
+        private class JourneyAction : Journey
+        {
+            private readonly Func<Action, bool> _predicate;
+
+            public JourneyAction(Func<Action, bool> predicate)
+            {
+                _predicate = predicate;
+            }
+
+            public override Entity Travel(SirenHttpClient client, Entity entity)
+            {
+                var action = entity.Actions.Single(_predicate);
+
+                return client.Post(action.Href, action
+                    .Fields.ToDictionary(field => field.Name, field => field.Value));
             }
         }
     }
