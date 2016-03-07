@@ -1,21 +1,28 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using Api.Tests.Acceptance.Siren;
 using NUnit.Framework;
 
 namespace Api.Tests.Acceptance
 {
-    internal class ItemsTests : Tests
+    [TestFixture]
+    internal class ItemsJourneyTests : JourneyTests
     {
         private Entity _entity;
 
         [OneTimeSetUp]
         public new void OneTimeSetUp()
         {
-            var root = Client.Get();
-            var itemsHref = root.Links.Single(link => link.Rel.Contains("items")).Href;
-            _entity = Client.Get(itemsHref);
+            var sirenJourney = new SirenJourney(new SirenHttpClient(new HttpClient
+            {
+                BaseAddress = BaseAddress
+            }));
+
+            _entity = sirenJourney
+                .FollowLink("items")
+                .Travel();
         }
 
         [Test]
