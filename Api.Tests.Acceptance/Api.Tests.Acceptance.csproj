@@ -51,13 +51,17 @@
     <Compile Include="BasketTests.cs" />
     <Compile Include="ItemsTests.cs" />
     <Compile Include="ItemTests.cs" />
+    <Compile Include="JourneyTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RootJourneyTests.cs" />
     <Compile Include="Siren\Action.cs" />
     <Compile Include="Siren\Entity.cs" />
     <Compile Include="Siren\Field.cs" />
     <Compile Include="Siren\Link.cs" />
     <Compile Include="Siren\SirenHttpClient.cs" />
     <Compile Include="RootTests.cs" />
+    <Compile Include="Siren\SirenJourney.cs" />
+    <Compile Include="StatusJourneyTests.cs" />
     <Compile Include="StatusTests.cs" />
     <Compile Include="Tests.cs" />
   </ItemGroup>
