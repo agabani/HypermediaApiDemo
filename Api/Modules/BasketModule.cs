@@ -12,6 +12,16 @@ namespace Api.Modules
 {
     public class BasketModule : Module
     {
+        private static readonly List<IPriceDeltaRule> PriceDeltaRules = new List<IPriceDeltaRule>
+        {
+            new PriceDeltaRule("A", 50),
+            new PriceDeltaRule("B", 30),
+            new PriceDeltaRule("C", 20),
+            new PriceDeltaRule("D", 15),
+            new MultiPriceDeltaRule("A", 3, -20),
+            new MultiPriceDeltaRule("B", 2, -15)
+        };
+
         private readonly AccountRepository _accountRepository = new AccountRepository();
         private readonly BasketRepository _basketRepository = new BasketRepository();
 
@@ -45,6 +55,10 @@ namespace Api.Modules
             return new Entity
             {
                 Class = new[] {"basket", "collection"},
+                Properties = new Dictionary<string, dynamic>
+                {
+                    {"price", GetPrice(basket)}
+                },
                 Entities =
                     stringValues == default(StringValues) ? new[] {httpEntity}.Concat(entities).ToArray() : entities,
                 Links = new[]
@@ -56,7 +70,7 @@ namespace Api.Modules
                     },
                     new Link
                     {
-                        Rel = new []{"items"},
+                        Rel = new[] {"items"},
                         Href = new Uri(Request.GetBaseAddress(), "items")
                     }
                 }
@@ -76,6 +90,10 @@ namespace Api.Modules
             return new Entity
             {
                 Class = new[] {"basket", "collection"},
+                Properties = new Dictionary<string, dynamic>
+                {
+                    {"price", GetPrice(basket)}
+                },
                 Entities = basket.Select(s => new ItemModule(Request, "items", s).BuildEntity()).ToArray(),
                 Links = new[]
                 {
@@ -86,11 +104,57 @@ namespace Api.Modules
                     },
                     new Link
                     {
-                        Rel = new []{"items"},
+                        Rel = new[] {"items"},
                         Href = new Uri(Request.GetBaseAddress(), "items")
                     }
                 }
             };
+        }
+
+        private static double GetPrice(IEnumerable<string> items)
+        {
+            return PriceDeltaRules.Sum(rule => rule.CalculatePriceDelta(items));
+        }
+
+        private interface IPriceDeltaRule
+        {
+            double CalculatePriceDelta(IEnumerable<string> items);
+        }
+
+        private sealed class MultiPriceDeltaRule : IPriceDeltaRule
+        {
+            private readonly double _discount;
+            private readonly string _item;
+            private readonly int _quantity;
+
+            public MultiPriceDeltaRule(string item, int quantity, double discount)
+            {
+                _item = item;
+                _quantity = quantity;
+                _discount = discount;
+            }
+
+            public double CalculatePriceDelta(IEnumerable<string> items)
+            {
+                return items.Count(item => item.Equals(_item))/_quantity*_discount;
+            }
+        }
+
+        private sealed class PriceDeltaRule : IPriceDeltaRule
+        {
+            private readonly string _item;
+            private readonly double _price;
+
+            public PriceDeltaRule(string item, double price)
+            {
+                _item = item;
+                _price = price;
+            }
+
+            public double CalculatePriceDelta(IEnumerable<string> items)
+            {
+                return items.Count(item => item.Equals(_item))*_price;
+            }
         }
     }
 }

@@ -13,13 +13,7 @@ namespace Api.Tests.Acceptance
         [SetUp]
         public void SetUp()
         {
-            _sirenJourney = new SirenJourney(new SirenHttpClient(new HttpClient
-            {
-                BaseAddress = BaseAddress
-            }))
-                .FollowLink(link => link.Rel.Contains("items"))
-                .FollowEntityLink(entity => entity.Properties.Contains(new KeyValuePair<string, dynamic>("id", "A")))
-                .FollowAction(action => action.Name.Equals("basket-add"));
+            _sirenJourney = new SirenJourney(new SirenHttpClient(new HttpClient {BaseAddress = BaseAddress}));
         }
 
         [TearDown]
@@ -35,6 +29,9 @@ namespace Api.Tests.Acceptance
         public void Add_to_basket_and_provides_anonymous_account()
         {
             var entity = _sirenJourney
+                .FollowLink(l => l.Rel.Contains("items"))
+                .FollowEntityLink(e => e.Properties.Contains(new KeyValuePair<string, dynamic>("id", "A")))
+                .FollowAction(a => a.Name.Equals("basket-add"))
                 .Travel();
 
             Assert.That(entity.Class.Contains("basket"));
@@ -60,6 +57,9 @@ namespace Api.Tests.Acceptance
         public void Authenticated_request_should_not_show_http_class()
         {
             var entity = _sirenJourney
+                .FollowLink(l => l.Rel.Contains("items"))
+                .FollowEntityLink(e => e.Properties.Contains(new KeyValuePair<string, dynamic>("id", "A")))
+                .FollowAction(a => a.Name.Equals("basket-add"))
                 .FollowLink(link => link.Rel.Contains("self"))
                 .Travel();
 
@@ -73,6 +73,28 @@ namespace Api.Tests.Acceptance
             Assert.That(entity
                 .Entities.Any(e => e.Class.Contains("http")),
                 Is.False);
+        }
+
+        [Test]
+        [TestCase("A", 50d)]
+        [TestCase("AB", 80d)]
+        [TestCase("CDBA", 115d)]
+        [TestCase("AA", 100d)]
+        [TestCase("AAA", 130d)]
+        [TestCase("AAABB", 175d)]
+        public void Basket_has_price(string items, double expectedPrice)
+        {
+            foreach (var item in items)
+            {
+                _sirenJourney
+                    .FollowLink(l => l.Rel.Contains("items"))
+                    .FollowEntityLink(e => e.Properties.Contains(new KeyValuePair<string, dynamic>("id", item.ToString())))
+                    .FollowAction(a => a.Name.Equals("basket-add"));
+            }
+
+            var entity = _sirenJourney.Travel();
+
+            Assert.That(entity.Properties["price"], Is.EqualTo(expectedPrice));
         }
     }
 }
