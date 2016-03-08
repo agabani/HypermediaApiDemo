@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Api.Repositories;
 using Api.ValueObjects;
 
 namespace Api.DomainObjects
@@ -13,18 +12,18 @@ namespace Api.DomainObjects
             new DiscoutRule("B", 2, new Money("GBP", 15))
         };
 
-        public Money GetTotal(IEnumerable<Item> items)
+        public Money GetTotal(Basket basket)
         {
             var price = new Money("GBP", 0);
 
-            foreach (var item in items)
+            foreach (var item in basket.Items)
             {
                 price += item.Value;
             }
 
             foreach (var discoutRule in DiscoutRules)
             {
-                price -= discoutRule.CalculateDiscout(items);
+                price -= discoutRule.CalculateDiscout(basket.Items);
             }
 
             return price;

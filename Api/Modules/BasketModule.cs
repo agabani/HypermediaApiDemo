@@ -1,9 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Api.DomainObjects;
 using Api.Extensions;
 using Api.Repositories;
 using Api.Siren;
+using Api.ValueObjects;
 using Api.ViewModels;
 using Microsoft.AspNet.Http;
 using Microsoft.Extensions.Primitives;
@@ -61,7 +63,8 @@ namespace Api.Modules
                 Class = new[] {"basket", "collection"},
                 Properties = new Dictionary<string, dynamic>
                 {
-                    {"price", GetPrice(basket.Items.Select(item => item.Id))}
+                    {"price", GetPrice(basket).Units}
+//                    {"price", GetPrice(basket.Items.Select(item => item.Id))}
                 },
                 Entities =
                     stringValues == default(StringValues) ? new[] {httpEntity}.Concat(entities).ToArray() : entities,
@@ -96,7 +99,8 @@ namespace Api.Modules
                 Class = new[] {"basket", "collection"},
                 Properties = new Dictionary<string, dynamic>
                 {
-                    {"price", GetPrice(basket.Items.Select(item => item.Id))}
+                    {"price", GetPrice(basket).Units}
+//                    {"price", GetPrice(basket.Items.Select(item => item.Id))}
                 },
                 Entities =
                     basket.Items.Select(item => item.Id)
@@ -118,10 +122,15 @@ namespace Api.Modules
             };
         }
 
+        [Obsolete]
         private static double GetPrice(IEnumerable<string> items)
         {
-            //return new Checkout().GetTotal(items);
             return PriceDeltaRules.Sum(rule => rule.CalculatePriceDelta(items));
+        }
+
+        public static Money GetPrice(Basket basket)
+        {
+            return new Checkout().GetTotal(basket);
         }
 
         private interface IPriceDeltaRule

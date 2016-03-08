@@ -12,9 +12,7 @@ namespace Api.Repositories
         public Account CreateAnonymous()
         {
             var account = new Account();
-
             Accounts.Add(account);
-
             return account;
         }
 
@@ -22,7 +20,5 @@ namespace Api.Repositories
         {
             return Accounts.Single(account => account.Token == token);
         }
-
-        
     }
 }
