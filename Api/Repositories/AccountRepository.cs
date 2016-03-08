@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Api.DomainObjects;
 
 namespace Api.Repositories
 {
@@ -22,16 +23,6 @@ namespace Api.Repositories
             return Accounts.Single(account => account.Token == token);
         }
 
-        public class Account
-        {
-            public Account()
-            {
-                Id = Guid.NewGuid();
-                Token = Guid.NewGuid();
-            }
-
-            public Guid Id { get; }
-            public Guid Token { get; }
-        }
+        
     }
 }

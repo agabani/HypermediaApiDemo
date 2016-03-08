@@ -8,12 +8,12 @@ namespace Api.Repositories
     {
         private static readonly Dictionary<Guid, Basket> Baskets = new Dictionary<Guid, Basket>();
 
-        public void Save(AccountRepository.Account account, Basket basket)
+        public void Save(Account account, Basket basket)
         {
             Baskets[account.Id] = new Basket(basket);
         }
 
-        public Basket Get(AccountRepository.Account account)
+        public Basket Get(Account account)
         {
             return Baskets.ContainsKey(account.Id)
                 ? new Basket(Baskets[account.Id])
