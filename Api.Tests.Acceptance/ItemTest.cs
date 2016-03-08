@@ -43,6 +43,8 @@ namespace Api.Tests.Acceptance
 
             Has_class();
             Has_link_to_self(id);
+            Has_link_to_items();
+            Has_link_to_basket();
             Has_properties(id, value);
             Has_basket_actions(id);
         }
@@ -58,6 +60,22 @@ namespace Api.Tests.Acceptance
                 .Links.Single(link => link.Rel.Contains("self"))
                 .Href,
                 Is.EqualTo(new Uri(BaseAddress, $"items/{id}")));
+        }
+
+        private void Has_link_to_items()
+        {
+            Assert.That(_entity
+               .Links.Single(link => link.Rel.Contains("items"))
+               .Href,
+               Is.EqualTo(new Uri(BaseAddress, "items")));
+        }
+
+        private void Has_link_to_basket()
+        {
+            Assert.That(_entity
+               .Links.Single(link => link.Rel.Contains("basket"))
+               .Href,
+               Is.EqualTo(new Uri(BaseAddress, "basket")));
         }
 
         private void Has_properties(string id, double value)

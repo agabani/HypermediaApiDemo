@@ -33,6 +33,11 @@ namespace Api.Modules
                     },
                     new Link
                     {
+                        Rel = new []{"basket"},
+                        Href = new Uri(baseAddress, "/basket")
+                    },
+                    new Link
+                    {
                         Rel = new[] {"status"},
                         Href = new Uri(baseAddress, "/status")
                     }

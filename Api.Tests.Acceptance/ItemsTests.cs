@@ -42,6 +42,15 @@ namespace Api.Tests.Acceptance
         }
 
         [Test]
+        public void Links_to_basket()
+        {
+            Assert.That(_entity
+                .Links.Single(link => link.Rel.Contains("basket"))
+                .Href,
+                Is.EqualTo(new Uri(BaseAddress, "basket")));
+        }
+
+        [Test]
         [TestCase("A", 50d)]
         [TestCase("B", 30d)]
         [TestCase("C", 20d)]

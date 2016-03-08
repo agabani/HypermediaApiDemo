@@ -28,7 +28,20 @@ namespace Api.Repositories
 
         public List<string> GetBasket(Guid accountId)
         {
-            return Baskets.Single(basket => basket.AccountId == accountId).ItemIds;
+            var single = Baskets.SingleOrDefault(basket => basket.AccountId == accountId);
+
+            if (single == null)
+            {
+                single = new Basket
+                {
+                    AccountId = accountId,
+                    ItemIds = new List<string>()
+                };
+
+                Baskets.Add(single);
+            }
+
+            return single.ItemIds;
         }
 
         public class Basket

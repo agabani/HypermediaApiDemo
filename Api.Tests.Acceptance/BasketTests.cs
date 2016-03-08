@@ -96,5 +96,15 @@ namespace Api.Tests.Acceptance
 
             Assert.That(entity.Properties["price"], Is.EqualTo(expectedPrice));
         }
+
+        [Test]
+        public void Empty_basket_has_price()
+        {
+            var entity = _sirenJourney
+                .FollowLink(l => l.Rel.Contains("basket"))
+                .Travel();
+
+            Assert.That(entity.Properties["price"], Is.EqualTo(0));
+        }
     }
 }

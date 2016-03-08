@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Api.Extensions;
 using Api.Repositories;
 using Api.Siren;
 using Microsoft.AspNet.Http;
@@ -34,6 +35,35 @@ namespace Api.Modules
         {
             var item = _itemRepository.Get(_id);
 
+            var links = !_anemic
+                ? new[]
+                {
+                    new Link
+                    {
+                        Rel = new[] {"self"},
+                        Href = _href
+                    },
+                    new Link
+                    {
+                        Rel = new[] {"items"},
+                        Href = new Uri(Request.GetBaseAddress(), "items")
+                    },
+                    new Link
+                    {
+                        Rel = new[] {"basket"},
+                        Href = new Uri(Request.GetBaseAddress(), "basket")
+                    }
+                }
+                : new[]
+                {
+                    new Link
+                    {
+                        Rel = new[] {"self"},
+                        Href = _href
+                    }
+                };
+
+
             return new Entity
             {
                 Class = new[] {"item"},
@@ -42,15 +72,8 @@ namespace Api.Modules
                     {"id", item.Id},
                     {"value", item.Value}
                 },
-                Entities = new Entity[] { },
-                Links = new[]
-                {
-                    new Link
-                    {
-                        Rel = new[] {"self"},
-                        Href = _href
-                    }
-                },
+                Entities = new Entity[] {},
+                Links = links,
                 Actions = _anemic
                     ? null
                     : new[]

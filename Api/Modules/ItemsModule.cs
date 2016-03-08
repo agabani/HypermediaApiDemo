@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using Api.Extensions;
 using Api.Repositories;
@@ -29,6 +30,11 @@ namespace Api.Modules
                     {
                         Rel = new[] {"self"},
                         Href = Request.GetAbsoluteAddress()
+                    },
+                    new Link
+                    {
+                        Rel = new[] {"basket"},
+                        Href = new Uri(Request.GetBaseAddress(), "/basket")
                     }
                 }
             };
