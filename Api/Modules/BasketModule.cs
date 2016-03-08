@@ -14,16 +14,6 @@ namespace Api.Modules
 {
     public class BasketModule : Module
     {
-        private static readonly List<IPriceDeltaRule> PriceDeltaRules = new List<IPriceDeltaRule>
-        {
-            new PriceDeltaRule("A", 50),
-            new PriceDeltaRule("B", 30),
-            new PriceDeltaRule("C", 20),
-            new PriceDeltaRule("D", 15),
-            new MultiPriceDeltaRule("A", 3, -20),
-            new MultiPriceDeltaRule("B", 2, -15)
-        };
-
         private readonly AccountRepository _accountRepository = new AccountRepository();
         private readonly BasketRepository _basketRepository = new BasketRepository();
         private readonly ItemRepository _itemRepository = new ItemRepository();
@@ -64,7 +54,6 @@ namespace Api.Modules
                 Properties = new Dictionary<string, dynamic>
                 {
                     {"price", GetPrice(basket).Units}
-//                    {"price", GetPrice(basket.Items.Select(item => item.Id))}
                 },
                 Entities =
                     stringValues == default(StringValues) ? new[] {httpEntity}.Concat(entities).ToArray() : entities,
@@ -100,7 +89,6 @@ namespace Api.Modules
                 Properties = new Dictionary<string, dynamic>
                 {
                     {"price", GetPrice(basket).Units}
-//                    {"price", GetPrice(basket.Items.Select(item => item.Id))}
                 },
                 Entities =
                     basket.Items.Select(item => item.Id)
@@ -122,56 +110,9 @@ namespace Api.Modules
             };
         }
 
-        [Obsolete]
-        private static double GetPrice(IEnumerable<string> items)
-        {
-            return PriceDeltaRules.Sum(rule => rule.CalculatePriceDelta(items));
-        }
-
         public static Money GetPrice(Basket basket)
         {
             return new Checkout().GetTotal(basket);
-        }
-
-        private interface IPriceDeltaRule
-        {
-            double CalculatePriceDelta(IEnumerable<string> items);
-        }
-
-        private sealed class MultiPriceDeltaRule : IPriceDeltaRule
-        {
-            private readonly double _discount;
-            private readonly string _item;
-            private readonly int _quantity;
-
-            public MultiPriceDeltaRule(string item, int quantity, double discount)
-            {
-                _item = item;
-                _quantity = quantity;
-                _discount = discount;
-            }
-
-            public double CalculatePriceDelta(IEnumerable<string> items)
-            {
-                return items.Count(item => item.Equals(_item))/_quantity*_discount;
-            }
-        }
-
-        private sealed class PriceDeltaRule : IPriceDeltaRule
-        {
-            private readonly string _item;
-            private readonly double _price;
-
-            public PriceDeltaRule(string item, double price)
-            {
-                _item = item;
-                _price = price;
-            }
-
-            public double CalculatePriceDelta(IEnumerable<string> items)
-            {
-                return items.Count(item => item.Equals(_item))*_price;
-            }
         }
     }
 }
