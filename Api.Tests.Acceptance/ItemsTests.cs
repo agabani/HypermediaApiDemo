@@ -64,10 +64,10 @@ namespace Api.Tests.Acceptance
 
             Assert.That(item.Class.Contains("item"));
 
-            Assert.That(item
-                .Links.Single(link => link.Rel.Contains("self"))
-                .Href,
-                Is.EqualTo(new Uri(BaseAddress, $"items/{id}")));
+            var link = item.Links.Single();
+
+            Assert.That(link.Rel.Contains("self"));
+            Assert.That(link.Href, Is.EqualTo(new Uri(BaseAddress, $"items/{id}")));
 
             Assert.That(item.Properties["value"], Is.EqualTo(value));
         }
