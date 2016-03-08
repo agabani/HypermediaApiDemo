@@ -10,26 +10,28 @@ namespace Api.Repositories
 
         public Account CreateAnonymous()
         {
-            var account = new Account
-            {
-                Id = Guid.NewGuid(),
-                Token = Guid.NewGuid()
-            };
+            var account = new Account();
 
             Accounts.Add(account);
 
             return account;
         }
 
-        public Account GetByToken(Guid guid)
+        public Account GetByToken(Guid token)
         {
-            return Accounts.Single(account => account.Token == guid);
+            return Accounts.Single(account => account.Token == token);
         }
 
         public class Account
         {
-            public Guid Id { get; set; }
-            public Guid Token { get; set; }
+            public Account()
+            {
+                Id = Guid.NewGuid();
+                Token = Guid.NewGuid();
+            }
+
+            public Guid Id { get; }
+            public Guid Token { get; }
         }
     }
 }
