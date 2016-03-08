@@ -17,30 +17,45 @@ namespace Api.Modules
 
             return new Entity
             {
-                Class = new[] {"root"},
-                Entities = new Entity[] {},
-                Links = new[]
+                Class = BuildClass(),
+                Entities = BuildEntities(),
+                Links = BuildLinks(baseAddress)
+            };
+        }
+
+        private static string[] BuildClass()
+        {
+            return new[] {"root"};
+        }
+
+        private static Entity[] BuildEntities()
+        {
+            return new Entity[] {};
+        }
+
+        private Link[] BuildLinks(Uri baseAddress)
+        {
+            return new[]
+            {
+                new Link
                 {
-                    new Link
-                    {
-                        Rel = new[] {"self"},
-                        Href = Request.GetAbsoluteAddress()
-                    },
-                    new Link
-                    {
-                        Rel = new[] {"items"},
-                        Href = new Uri(baseAddress, "/items")
-                    },
-                    new Link
-                    {
-                        Rel = new []{"basket"},
-                        Href = new Uri(baseAddress, "/basket")
-                    },
-                    new Link
-                    {
-                        Rel = new[] {"status"},
-                        Href = new Uri(baseAddress, "/status")
-                    }
+                    Rel = new[] {"self"},
+                    Href = Request.GetAbsoluteAddress()
+                },
+                new Link
+                {
+                    Rel = new[] {"items"},
+                    Href = new Uri(baseAddress, "/items")
+                },
+                new Link
+                {
+                    Rel = new []{"basket"},
+                    Href = new Uri(baseAddress, "/basket")
+                },
+                new Link
+                {
+                    Rel = new[] {"status"},
+                    Href = new Uri(baseAddress, "/status")
                 }
             };
         }

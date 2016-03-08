@@ -16,19 +16,39 @@ namespace Api.Modules
         {
             return new Entity
             {
-                Class = new[] {"status"},
-                Properties = new Dictionary<string, dynamic>
+                Class = BuildClass(),
+                Properties = BuildProperties(),
+                Entities = BuildEntities(),
+                Links = BuildLinks()
+            };
+        }
+
+        private static string[] BuildClass()
+        {
+            return new[] {"status"};
+        }
+
+        private static Dictionary<string, dynamic> BuildProperties()
+        {
+            return new Dictionary<string, dynamic>
+            {
+                {"currentUtcTime", DateTime.UtcNow}
+            };
+        }
+
+        private static Entity[] BuildEntities()
+        {
+            return new Entity[] {};
+        }
+
+        private Link[] BuildLinks()
+        {
+            return new[]
+            {
+                new Link
                 {
-                    {"currentUtcTime", DateTime.UtcNow}
-                },
-                Entities = new Entity[] {},
-                Links = new[]
-                {
-                    new Link
-                    {
-                        Rel = new[] {"self"},
-                        Href = Request.GetAbsoluteAddress()
-                    }
+                    Rel = new[] {"self"},
+                    Href = Request.GetAbsoluteAddress()
                 }
             };
         }
