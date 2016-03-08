@@ -5,7 +5,6 @@ using Api.DomainObjects;
 using Api.Extensions;
 using Api.Repositories;
 using Api.Siren;
-using Api.ValueObjects;
 using Api.ViewModels;
 using Microsoft.AspNet.Http;
 using Microsoft.Extensions.Primitives;
@@ -14,9 +13,10 @@ namespace Api.Modules
 {
     public class BasketModule : Module
     {
-        private readonly AccountRepository _accountRepository = new AccountRepository();
-        private readonly BasketRepository _basketRepository = new BasketRepository();
-        private readonly ItemRepository _itemRepository = new ItemRepository();
+        private static readonly AccountRepository AccountRepository = new AccountRepository();
+        private static readonly BasketRepository BasketRepository = new BasketRepository();
+        private static readonly ItemRepository ItemRepository = new ItemRepository();
+        private static readonly Checkout Checkout = new Checkout();
 
         public BasketModule(HttpRequest request) : base(request)
         {
@@ -27,16 +27,16 @@ namespace Api.Modules
             StringValues stringValues;
 
             var account = Request.Headers.TryGetValue("authorization", out stringValues)
-                ? _accountRepository.GetByToken(Guid.Parse(stringValues.First().Split(' ').Last()))
-                : _accountRepository.CreateAnonymous();
+                ? AccountRepository.GetByToken(Guid.Parse(stringValues.First().Split(' ').Last()))
+                : AccountRepository.CreateAnonymous();
 
-            var basket = _basketRepository.Get(account);
-            basket.AddItem(_itemRepository.Get(model.Id));
-            _basketRepository.Save(account, basket);
+            var basket = BasketRepository.Get(account);
+            basket.AddItem(ItemRepository.Get(model.Id));
+            BasketRepository.Save(account, basket);
 
             var entities =
                 basket.Items.Select(item => item.Id)
-                    .Select(itemId => new ItemModule(Request, "items", itemId).BuildEntity())
+                    .Select(itemId => new AnemicItemModule(Request, "items", itemId).BuildEntity())
                     .ToArray();
 
             var httpEntity = new Entity
@@ -53,7 +53,7 @@ namespace Api.Modules
                 Class = new[] {"basket", "collection"},
                 Properties = new Dictionary<string, dynamic>
                 {
-                    {"price", GetPrice(basket).Units}
+                    {"price", Checkout.GetTotal(basket).Units}
                 },
                 Entities =
                     stringValues == default(StringValues) ? new[] {httpEntity}.Concat(entities).ToArray() : entities,
@@ -78,21 +78,21 @@ namespace Api.Modules
             StringValues stringValues;
 
             var account = Request.Headers.TryGetValue("authorization", out stringValues)
-                ? _accountRepository.GetByToken(Guid.Parse(stringValues.First().Split(' ').Last()))
-                : _accountRepository.CreateAnonymous();
+                ? AccountRepository.GetByToken(Guid.Parse(stringValues.First().Split(' ').Last()))
+                : AccountRepository.CreateAnonymous();
 
-            var basket = _basketRepository.Get(account);
+            var basket = BasketRepository.Get(account);
 
             return new Entity
             {
                 Class = new[] {"basket", "collection"},
                 Properties = new Dictionary<string, dynamic>
                 {
-                    {"price", GetPrice(basket).Units}
+                    {"price", Checkout.GetTotal(basket).Units}
                 },
                 Entities =
                     basket.Items.Select(item => item.Id)
-                        .Select(s => new ItemModule(Request, "items", s).BuildEntity())
+                        .Select(s => new AnemicItemModule(Request, "items", s).BuildEntity())
                         .ToArray(),
                 Links = new[]
                 {
@@ -108,11 +108,6 @@ namespace Api.Modules
                     }
                 }
             };
-        }
-
-        public static Money GetPrice(Basket basket)
-        {
-            return new Checkout().GetTotal(basket);
         }
     }
 }

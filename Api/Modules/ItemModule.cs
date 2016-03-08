@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Api.Extensions;
 using Api.Repositories;
 using Api.Siren;
+using Api.ValueObjects;
 using Microsoft.AspNet.Http;
 using Microsoft.AspNet.Http.Extensions;
 using Action = Api.Siren.Action;
@@ -11,91 +12,98 @@ namespace Api.Modules
 {
     public class ItemModule : Module
     {
-        private readonly bool _anemic;
-        private readonly Uri _href;
+        private static readonly ItemRepository ItemRepository = new ItemRepository();
         private readonly string _id;
-
-        private readonly ItemRepository _itemRepository = new ItemRepository();
+        protected readonly Uri Href;
 
         public ItemModule(HttpRequest request, string path, string id) : base(request)
         {
             _id = id;
-            _href = new Uri($"{request.Scheme}://{request.Host.Value}/{path}/{id}");
-            _anemic = true;
+            Href = new Uri($"{request.Scheme}://{request.Host.Value}/{path}/{id}");
         }
 
         public ItemModule(HttpRequest request, string id) : base(request)
         {
-            _href = new Uri(Request.GetDisplayUrl());
+            Href = new Uri(Request.GetDisplayUrl());
             _id = id;
-            _anemic = false;
         }
 
         public Entity BuildEntity()
         {
-            var item = _itemRepository.Get(_id);
-
-            var links = !_anemic
-                ? new[]
-                {
-                    new Link
-                    {
-                        Rel = new[] {"self"},
-                        Href = _href
-                    },
-                    new Link
-                    {
-                        Rel = new[] {"items"},
-                        Href = new Uri(Request.GetBaseAddress(), "items")
-                    },
-                    new Link
-                    {
-                        Rel = new[] {"basket"},
-                        Href = new Uri(Request.GetBaseAddress(), "basket")
-                    }
-                }
-                : new[]
-                {
-                    new Link
-                    {
-                        Rel = new[] {"self"},
-                        Href = _href
-                    }
-                };
-
+            var item = ItemRepository.Get(_id);
 
             return new Entity
             {
-                Class = new[] {"item"},
-                Properties = new Dictionary<string, dynamic>
+                Class = BuildClass(),
+                Properties = BuildProperties(item),
+                Entities = BuildEntities(),
+                Links = BuildLinks(),
+                Actions = BuildActions(item)
+            };
+        }
+
+        private static string[] BuildClass()
+        {
+            return new[] {"item"};
+        }
+
+        private static Dictionary<string, dynamic> BuildProperties(Item item)
+        {
+            return new Dictionary<string, dynamic>
+            {
+                {"id", item.Id},
+                {"value", item.Value.Units}
+            };
+        }
+
+        private static Entity[] BuildEntities()
+        {
+            return new Entity[] {};
+        }
+
+        protected virtual Action[] BuildActions(Item item)
+        {
+            return new[]
+            {
+                new Action
                 {
-                    {"id", item.Id},
-                    {"value", item.Value.Units}
-                },
-                Entities = new Entity[] {},
-                Links = links,
-                Actions = _anemic
-                    ? null
-                    : new[]
+                    Name = "basket-add",
+                    Href = new Uri(Href, "/basket"),
+                    Method = "POST",
+                    Type = "application/x-www-form-urlencoded",
+                    Fields = new[]
                     {
-                        new Action
+                        new Field
                         {
-                            Name = "basket-add",
-                            Href = new Uri(_href, "/basket"),
-                            Method = "POST",
-                            Type = "application/x-www-form-urlencoded",
-                            Fields = new[]
-                            {
-                                new Field
-                                {
-                                    Type = "text",
-                                    Name = "id",
-                                    Value = item.Id
-                                }
-                            },
-                            Title = "Add to basket"
+                            Type = "text",
+                            Name = "id",
+                            Value = item.Id
                         }
-                    }
+                    },
+                    Title = "Add to basket"
+                }
+            };
+        }
+
+        protected virtual Link[] BuildLinks()
+        {
+            return new[]
+            {
+                new Link
+                {
+                    Rel = new[] {"self"},
+                    Href = Href
+                },
+                new Link
+                {
+                    Rel = new[] {"items"},
+                    Href = new Uri(Request.GetBaseAddress(), "items")
+                },
+                new Link
+                {
+                    Rel = new[] {"basket"},
+                    Href = new Uri(Request.GetBaseAddress(), "basket")
+                }
             };
         }
     }
