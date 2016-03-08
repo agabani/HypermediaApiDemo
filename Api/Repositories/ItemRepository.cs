@@ -23,17 +23,5 @@ namespace Api.Repositories
         {
             return Items.Single(item => item.Id == id);
         }
-
-        public class Item
-        {
-            public Item(string id, Money value)
-            {
-                Id = id;
-                Value = value;
-            }
-
-            public string Id { get; }
-            public Money Value { get; }
-        }
     }
 }

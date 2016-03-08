@@ -24,6 +24,7 @@ namespace Api.Modules
 
         private readonly AccountRepository _accountRepository = new AccountRepository();
         private readonly BasketRepository _basketRepository = new BasketRepository();
+        private readonly ItemRepository _itemRepository = new ItemRepository();
 
         public BasketModule(HttpRequest request) : base(request)
         {
@@ -37,11 +38,14 @@ namespace Api.Modules
                 ? _accountRepository.GetByToken(Guid.Parse(stringValues.First().Split(' ').Last()))
                 : _accountRepository.CreateAnonymous();
 
-            _basketRepository.AddItem(account, model.Id);
+            var basket = _basketRepository.Get(account);
+            basket.AddItem(_itemRepository.Get(model.Id));
+            _basketRepository.Save(account, basket);
 
-            var basket = _basketRepository.GetItems(account);
-
-            var entities = basket.Select(s => new ItemModule(Request, "items", s).BuildEntity()).ToArray();
+            var entities =
+                basket.Items.Select(item => item.Id)
+                    .Select(itemId => new ItemModule(Request, "items", itemId).BuildEntity())
+                    .ToArray();
 
             var httpEntity = new Entity
             {
@@ -57,7 +61,7 @@ namespace Api.Modules
                 Class = new[] {"basket", "collection"},
                 Properties = new Dictionary<string, dynamic>
                 {
-                    {"price", GetPrice(basket)}
+                    {"price", GetPrice(basket.Items.Select(item => item.Id))}
                 },
                 Entities =
                     stringValues == default(StringValues) ? new[] {httpEntity}.Concat(entities).ToArray() : entities,
@@ -85,16 +89,19 @@ namespace Api.Modules
                 ? _accountRepository.GetByToken(Guid.Parse(stringValues.First().Split(' ').Last()))
                 : _accountRepository.CreateAnonymous();
 
-            var basket = _basketRepository.GetItems(account);
+            var basket = _basketRepository.Get(account);
 
             return new Entity
             {
                 Class = new[] {"basket", "collection"},
                 Properties = new Dictionary<string, dynamic>
                 {
-                    {"price", GetPrice(basket)}
+                    {"price", GetPrice(basket.Items.Select(item => item.Id))}
                 },
-                Entities = basket.Select(s => new ItemModule(Request, "items", s).BuildEntity()).ToArray(),
+                Entities =
+                    basket.Items.Select(item => item.Id)
+                        .Select(s => new ItemModule(Request, "items", s).BuildEntity())
+                        .ToArray(),
                 Links = new[]
                 {
                     new Link
@@ -113,6 +120,7 @@ namespace Api.Modules
 
         private static double GetPrice(IEnumerable<string> items)
         {
+            //return new Checkout().GetTotal(items);
             return PriceDeltaRules.Sum(rule => rule.CalculatePriceDelta(items));
         }
 

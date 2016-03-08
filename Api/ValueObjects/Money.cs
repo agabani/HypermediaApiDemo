@@ -28,5 +28,10 @@ namespace Api.ValueObjects
 
             return new Money(a.Currency, a.Units - b.Units);
         }
+
+        public static Money operator *(Money a, double b)
+        {
+            return new Money(a.Currency, a.Units*b);
+        }
     }
 }
