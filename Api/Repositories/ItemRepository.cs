@@ -7,10 +7,10 @@ namespace Api.Repositories
     {
         private static readonly IReadOnlyCollection<Item> Items = new[]
         {
-            new Item {Id = "A", Value = 50d},
-            new Item {Id = "B", Value = 30d},
-            new Item {Id = "C", Value = 20d},
-            new Item {Id = "D", Value = 15d}
+            new Item("A", 50d),
+            new Item("B", 30d),
+            new Item("C", 20d),
+            new Item("D", 15d)
         };
 
         public IEnumerable<Item> Get()
@@ -25,8 +25,14 @@ namespace Api.Repositories
 
         public class Item
         {
-            public string Id { get; set; }
-            public double Value { get; set; }
+            public Item(string id, double value)
+            {
+                Id = id;
+                Value = value;
+            }
+
+            public string Id { get; }
+            public double Value { get; }
         }
     }
 }
