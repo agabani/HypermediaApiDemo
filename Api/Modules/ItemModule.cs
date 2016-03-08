@@ -70,7 +70,7 @@ namespace Api.Modules
                 Properties = new Dictionary<string, dynamic>
                 {
                     {"id", item.Id},
-                    {"value", item.Value}
+                    {"value", item.Value.Units}
                 },
                 Entities = new Entity[] {},
                 Links = links,

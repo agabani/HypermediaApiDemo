@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Api.ValueObjects;
 
 namespace Api.Repositories
 {
@@ -7,10 +8,10 @@ namespace Api.Repositories
     {
         private static readonly IReadOnlyCollection<Item> Items = new[]
         {
-            new Item("A", 50d),
-            new Item("B", 30d),
-            new Item("C", 20d),
-            new Item("D", 15d)
+            new Item("A", new Money("GBP", 50d)),
+            new Item("B", new Money("GBP", 30d)),
+            new Item("C", new Money("GBP", 20d)),
+            new Item("D", new Money("GBP", 15d))
         };
 
         public IEnumerable<Item> Get()
@@ -25,14 +26,14 @@ namespace Api.Repositories
 
         public class Item
         {
-            public Item(string id, double value)
+            public Item(string id, Money value)
             {
                 Id = id;
                 Value = value;
             }
 
             public string Id { get; }
-            public double Value { get; }
+            public Money Value { get; }
         }
     }
 }
