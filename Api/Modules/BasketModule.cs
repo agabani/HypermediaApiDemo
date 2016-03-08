@@ -37,9 +37,9 @@ namespace Api.Modules
                 ? _accountRepository.GetByToken(Guid.Parse(stringValues.First().Split(' ').Last()))
                 : _accountRepository.CreateAnonymous();
 
-            _basketRepository.AddItem(account.Id, model.Id);
+            _basketRepository.AddItem(account, model.Id);
 
-            var basket = _basketRepository.GetBasket(account.Id);
+            var basket = _basketRepository.GetItems(account);
 
             var entities = basket.Select(s => new ItemModule(Request, "items", s).BuildEntity()).ToArray();
 
@@ -85,7 +85,7 @@ namespace Api.Modules
                 ? _accountRepository.GetByToken(Guid.Parse(stringValues.First().Split(' ').Last()))
                 : _accountRepository.CreateAnonymous();
 
-            var basket = _basketRepository.GetBasket(account.Id);
+            var basket = _basketRepository.GetItems(account);
 
             return new Entity
             {

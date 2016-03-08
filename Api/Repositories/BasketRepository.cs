@@ -8,46 +8,42 @@ namespace Api.Repositories
     {
         private static readonly List<Basket> Baskets = new List<Basket>();
 
-        public void AddItem(Guid accountId, string itemId)
+        public void AddItem(AccountRepository.Account account, string itemId)
         {
-            var basket = Baskets.SingleOrDefault(b => b.AccountId == accountId);
+            var basket = Baskets.SingleOrDefault(b => b.AccountId == account.Id);
 
             if (basket == null)
             {
-                basket = new Basket
-                {
-                    AccountId = accountId,
-                    ItemIds = new List<string>()
-                };
-
+                basket = new Basket(account);
                 Baskets.Add(basket);
             }
 
             basket.ItemIds.Add(itemId);
         }
 
-        public List<string> GetBasket(Guid accountId)
+        public List<string> GetItems(AccountRepository.Account account)
         {
-            var single = Baskets.SingleOrDefault(basket => basket.AccountId == accountId);
+            var basket = Baskets.SingleOrDefault(b => b.AccountId == account.Id);
 
-            if (single == null)
+            if (basket == null)
             {
-                single = new Basket
-                {
-                    AccountId = accountId,
-                    ItemIds = new List<string>()
-                };
-
-                Baskets.Add(single);
+                basket = new Basket(account);
+                Baskets.Add(basket);
             }
 
-            return single.ItemIds;
+            return basket.ItemIds;
         }
 
         public class Basket
         {
-            public Guid AccountId { get; set; }
-            public List<string> ItemIds { get; set; }
+            public Basket(AccountRepository.Account account)
+            {
+                AccountId = account.Id;
+                ItemIds = new List<string>();
+            }
+
+            public Guid AccountId { get; }
+            public List<string> ItemIds { get; }
         }
     }
 }
