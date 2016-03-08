@@ -23,7 +23,7 @@ namespace Api.Modules
             {
                 Class = new[] {"items", "collection"},
                 Entities = items
-                    .Select(item => new AnemicItemModule(Request, "items", item.Id).BuildEntity()).ToArray(),
+                    .Select(item => new AnemicItemModule(Request, item.Id).BuildEntity()).ToArray(),
                 Links = new[]
                 {
                     new Link

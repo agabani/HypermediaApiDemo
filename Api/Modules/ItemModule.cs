@@ -13,24 +13,18 @@ namespace Api.Modules
     public class ItemModule : Module
     {
         private static readonly ItemRepository ItemRepository = new ItemRepository();
-        private readonly string _id;
+        protected readonly string Id;
         protected readonly Uri Href;
-
-        public ItemModule(HttpRequest request, string path, string id) : base(request)
-        {
-            _id = id;
-            Href = new Uri($"{request.Scheme}://{request.Host.Value}/{path}/{id}");
-        }
 
         public ItemModule(HttpRequest request, string id) : base(request)
         {
             Href = new Uri(Request.GetDisplayUrl());
-            _id = id;
+            Id = id;
         }
 
         public Entity BuildEntity()
         {
-            var item = ItemRepository.Get(_id);
+            var item = ItemRepository.Get(Id);
 
             return new Entity
             {

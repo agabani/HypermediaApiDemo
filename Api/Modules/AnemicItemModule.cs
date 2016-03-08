@@ -1,12 +1,15 @@
+using System;
+using Api.Extensions;
 using Api.Siren;
 using Api.ValueObjects;
 using Microsoft.AspNet.Http;
+using Action = Api.Siren.Action;
 
 namespace Api.Modules
 {
     public class AnemicItemModule : ItemModule
     {
-        public AnemicItemModule(HttpRequest request, string path, string id) : base(request, path, id)
+        public AnemicItemModule(HttpRequest request, string id) : base(request, id)
         {
         }
 
@@ -22,7 +25,7 @@ namespace Api.Modules
                 new Link
                 {
                     Rel = new[] {"self"},
-                    Href = Href
+                    Href = new Uri(Request.GetBaseAddress(), $"/items/{Id}")
                 }
             };
         }
