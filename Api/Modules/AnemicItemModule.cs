@@ -10,10 +10,6 @@ namespace Api.Modules
         {
         }
 
-        public AnemicItemModule(HttpRequest request, string id) : base(request, id)
-        {
-        }
-
         protected override Action[] BuildActions(Item item)
         {
             return null;
