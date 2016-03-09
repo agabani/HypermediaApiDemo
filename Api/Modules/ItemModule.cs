@@ -1,5 +1,5 @@
-using System;
 using System.Collections.Generic;
+using Api.Factories;
 using Api.Repositories;
 using Api.Siren;
 using Api.ValueObjects;
@@ -53,25 +53,11 @@ namespace Api.Modules
 
         protected virtual Action[] BuildActions(Item item)
         {
+            var actionFactory = new ActionFactory(BaseAddress);
+
             return new[]
             {
-                new Action
-                {
-                    Name = "basket-add",
-                    Href = new Uri(BaseAddress, "/basket"),
-                    Method = "POST",
-                    Type = "application/x-www-form-urlencoded",
-                    Fields = new[]
-                    {
-                        new Field
-                        {
-                            Type = "text",
-                            Name = "id",
-                            Value = item.Id
-                        }
-                    },
-                    Title = "Add to basket"
-                }
+                actionFactory.Create("basket", "post", item)
             };
         }
 
