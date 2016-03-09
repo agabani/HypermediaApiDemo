@@ -1,10 +1,8 @@
 using System.Collections.Generic;
-using Api.Factories;
 using Api.Repositories;
 using Api.Siren;
 using Api.ValueObjects;
 using Microsoft.AspNet.Http;
-using Action = Api.Siren.Action;
 
 namespace Api.Modules
 {
