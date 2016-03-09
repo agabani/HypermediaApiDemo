@@ -1,11 +1,9 @@
 using System;
 using System.Collections.Generic;
-using Api.Extensions;
 using Api.Repositories;
 using Api.Siren;
 using Api.ValueObjects;
 using Microsoft.AspNet.Http;
-using Microsoft.AspNet.Http.Extensions;
 using Action = Api.Siren.Action;
 
 namespace Api.Modules
@@ -14,11 +12,9 @@ namespace Api.Modules
     {
         private static readonly ItemRepository ItemRepository = new ItemRepository();
         protected readonly string Id;
-        protected readonly Uri Href;
 
         public ItemModule(HttpRequest request, string id) : base(request)
         {
-            Href = new Uri(Request.GetDisplayUrl());
             Id = id;
         }
 
@@ -62,7 +58,7 @@ namespace Api.Modules
                 new Action
                 {
                     Name = "basket-add",
-                    Href = new Uri(Href, "/basket"),
+                    Href = new Uri(BaseAddress, "/basket"),
                     Method = "POST",
                     Type = "application/x-www-form-urlencoded",
                     Fields = new[]
@@ -86,17 +82,17 @@ namespace Api.Modules
                 new Link
                 {
                     Rel = new[] {"self"},
-                    Href = Href
+                    Href = new Uri(BaseAddress, $"/items/{Id}")
                 },
                 new Link
                 {
                     Rel = new[] {"items"},
-                    Href = new Uri(Request.GetBaseAddress(), "items")
+                    Href = new Uri(BaseAddress, "/items")
                 },
                 new Link
                 {
                     Rel = new[] {"basket"},
-                    Href = new Uri(Request.GetBaseAddress(), "basket")
+                    Href = new Uri(BaseAddress, "/basket")
                 }
             };
         }

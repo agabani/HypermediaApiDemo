@@ -1,5 +1,4 @@
 ﻿using System;
-using Api.Extensions;
 using Api.Siren;
 using Microsoft.AspNet.Http;
 
@@ -33,29 +32,27 @@ namespace Api.Modules
 
         private Link[] BuildLinks()
         {
-            var baseAddress = Request.GetBaseAddress();
-
             return new[]
             {
                 new Link
                 {
                     Rel = new[] {"self"},
-                    Href = baseAddress
+                    Href = BaseAddress
                 },
                 new Link
                 {
                     Rel = new[] {"items"},
-                    Href = new Uri(baseAddress, "/items")
+                    Href = new Uri(BaseAddress, "/items")
                 },
                 new Link
                 {
                     Rel = new[] {"basket"},
-                    Href = new Uri(baseAddress, "/basket")
+                    Href = new Uri(BaseAddress, "/basket")
                 },
                 new Link
                 {
                     Rel = new[] {"status"},
-                    Href = new Uri(baseAddress, "/status")
+                    Href = new Uri(BaseAddress, "/status")
                 }
             };
         }

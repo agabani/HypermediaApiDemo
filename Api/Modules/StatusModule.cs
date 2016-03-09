@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using Api.Extensions;
 using Api.Siren;
 using Microsoft.AspNet.Http;
 
@@ -48,7 +47,7 @@ namespace Api.Modules
                 new Link
                 {
                     Rel = new[] {"self"},
-                    Href = Request.GetAbsoluteAddress()
+                    Href = new Uri(BaseAddress, "/status")
                 }
             };
         }

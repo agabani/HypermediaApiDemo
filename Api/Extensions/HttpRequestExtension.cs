@@ -9,10 +9,5 @@ namespace Api.Extensions
         {
             return new Uri($"{httpRequest.Scheme}://{httpRequest.Host.Value}");
         }
-
-        public static Uri GetAbsoluteAddress(this HttpRequest httpRequest)
-        {
-            return new Uri($"{httpRequest.Scheme}://{httpRequest.Host.Value}{httpRequest.Path}");
-        }
     }
 }

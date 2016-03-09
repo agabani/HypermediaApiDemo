@@ -1,5 +1,4 @@
 using System;
-using Api.Extensions;
 using Api.Siren;
 using Api.ValueObjects;
 using Microsoft.AspNet.Http;
@@ -25,7 +24,7 @@ namespace Api.Modules
                 new Link
                 {
                     Rel = new[] {"self"},
-                    Href = new Uri(Request.GetBaseAddress(), $"/items/{Id}")
+                    Href = new Uri(BaseAddress, $"/items/{Id}")
                 }
             };
         }

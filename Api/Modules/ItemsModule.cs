@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Api.Extensions;
 using Api.Repositories;
 using Api.Siren;
 using Api.ValueObjects;
@@ -36,8 +35,7 @@ namespace Api.Modules
 
         private Entity[] BuildEntities(IEnumerable<Item> items)
         {
-            return items
-                .Select(item => new AnemicItemModule(Request, item.Id).Handle()).ToArray();
+            return items.Select(item => new AnemicItemModule(Request, item.Id).Handle()).ToArray();
         }
 
         private Link[] BuildLinks()
@@ -47,12 +45,12 @@ namespace Api.Modules
                 new Link
                 {
                     Rel = new[] {"self"},
-                    Href = Request.GetAbsoluteAddress()
+                    Href = new Uri(BaseAddress, "/items")
                 },
                 new Link
                 {
                     Rel = new[] {"basket"},
-                    Href = new Uri(Request.GetBaseAddress(), "/basket")
+                    Href = new Uri(BaseAddress, "/basket")
                 }
             };
         }

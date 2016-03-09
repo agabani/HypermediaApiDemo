@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Api.DomainObjects;
-using Api.Extensions;
 using Api.Repositories;
 using Api.Siren;
 using Api.ViewModels;
@@ -114,12 +113,12 @@ namespace Api.Modules
                 new Link
                 {
                     Rel = new[] {"self"},
-                    Href = Request.GetAbsoluteAddress()
+                    Href = new Uri(BaseAddress, "/basket")
                 },
                 new Link
                 {
                     Rel = new[] {"items"},
-                    Href = new Uri(Request.GetBaseAddress(), "items")
+                    Href = new Uri(BaseAddress, "items")
                 }
             };
         }
