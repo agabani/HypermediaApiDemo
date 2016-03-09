@@ -12,50 +12,29 @@ namespace Api.Factories
             _baseAddress = baseAddress;
         }
 
-        public Link Create(string entity, bool self)
+        public Link Create(string entity, bool isSelf)
         {
             switch (entity)
             {
                 case "root":
-                    return new Link
-                    {
-                        Rel = Relation("root", self),
-                        Href = new Uri(_baseAddress, "/")
-                    };
+                    return new Link(Relation("root", isSelf), new Uri(_baseAddress, "/"));
                 case "status":
-                    return new Link
-                    {
-                        Rel = Relation("status", self),
-                        Href = new Uri(_baseAddress, "/status")
-                    };
+                    return new Link(Relation("status", isSelf), new Uri(_baseAddress, "/status"));
                 case "items":
-                    return new Link
-                    {
-                        Rel = Relation("items", self),
-                        Href = new Uri(_baseAddress, "/items")
-                    };
+                    return new Link(Relation("items", isSelf), new Uri(_baseAddress, "/items"));
                 case "basket":
-                    return new Link
-                    {
-                        Rel = Relation("basket", self),
-                        Href = new Uri(_baseAddress, "/basket")
-                    };
+                    return new Link(Relation("basket", isSelf), new Uri(_baseAddress, "/basket"));
                 default:
                     throw new NotImplementedException();
             }
         }
-
 
         public Link Create(string entity, string id, bool self)
         {
             switch (entity)
             {
                 case "item":
-                    return new Link
-                    {
-                        Rel = Relation("item", self),
-                        Href = new Uri(_baseAddress, $"/items/{id}")
-                    };
+                    return new Link(Relation("item", self), new Uri(_baseAddress, $"/items/{id}"));
                 default:
                     throw new NotImplementedException();
             }
