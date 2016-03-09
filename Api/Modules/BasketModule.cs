@@ -22,7 +22,7 @@ namespace Api.Modules
         {
         }
 
-        public Entity BuildEntity(BasketAddModel model)
+        public Entity Handle(BasketAddModel model)
         {
             StringValues stringValues;
 
@@ -34,46 +34,16 @@ namespace Api.Modules
             basket.AddItem(ItemRepository.Get(model.Id));
             BasketRepository.Save(account, basket);
 
-            var entities =
-                basket.Items.Select(item => item.Id)
-                    .Select(itemId => new AnemicItemModule(Request, itemId).BuildEntity())
-                    .ToArray();
-
-            var httpEntity = new Entity
-            {
-                Class = new[] {"http"},
-                Properties = new Dictionary<string, dynamic>
-                {
-                    {"authorization", $"Basic {account.Token}"}
-                }
-            };
-
             return new Entity
             {
-                Class = new[] {"basket", "collection"},
-                Properties = new Dictionary<string, dynamic>
-                {
-                    {"price", Checkout.GetTotal(basket).Units}
-                },
-                Entities =
-                    stringValues == default(StringValues) ? new[] {httpEntity}.Concat(entities).ToArray() : entities,
-                Links = new[]
-                {
-                    new Link
-                    {
-                        Rel = new[] {"self"},
-                        Href = Request.GetAbsoluteAddress()
-                    },
-                    new Link
-                    {
-                        Rel = new[] {"items"},
-                        Href = new Uri(Request.GetBaseAddress(), "items")
-                    }
-                }
+                Class = BuildClass(),
+                Properties = BuildProperties(basket),
+                Entities = BuildEntities(basket, account, stringValues != default(StringValues)),
+                Links = BuildLinks()
             };
         }
 
-        public Entity BuildEntity()
+        public Entity Handle()
         {
             StringValues stringValues;
 
@@ -85,27 +55,66 @@ namespace Api.Modules
 
             return new Entity
             {
-                Class = new[] {"basket", "collection"},
+                Class = BuildClass(),
+                Properties = BuildProperties(basket),
+                Entities = BuildEntities(basket),
+                Links = BuildLinks()
+            };
+        }
+
+        private Entity[] BuildEntities(Basket basket, Account account, bool isAuthenticated)
+        {
+            var entities = basket.Items
+                .Select(item => item.Id)
+                .Select(itemId => new AnemicItemModule(Request, itemId).BuildEntity())
+                .ToArray();
+
+            var httpEntity = new Entity
+            {
+                Class = new[] {"http"},
                 Properties = new Dictionary<string, dynamic>
                 {
-                    {"price", Checkout.GetTotal(basket).Units}
-                },
-                Entities =
-                    basket.Items.Select(item => item.Id)
-                        .Select(s => new AnemicItemModule(Request, s).BuildEntity())
-                        .ToArray(),
-                Links = new[]
+                    {"authorization", $"Basic {account.Token}"}
+                }
+            };
+
+            return isAuthenticated ? entities : new[] {httpEntity}.Concat(entities).ToArray();
+        }
+
+        private Entity[] BuildEntities(Basket basket)
+        {
+            return basket.Items
+                .Select(item => item.Id)
+                .Select(s => new AnemicItemModule(Request, s).BuildEntity())
+                .ToArray();
+        }
+
+        private static string[] BuildClass()
+        {
+            return new[] {"basket", "collection"};
+        }
+
+        private static Dictionary<string, dynamic> BuildProperties(Basket basket)
+        {
+            return new Dictionary<string, dynamic>
+            {
+                {"price", Checkout.GetTotal(basket).Units}
+            };
+        }
+
+        private Link[] BuildLinks()
+        {
+            return new[]
+            {
+                new Link
                 {
-                    new Link
-                    {
-                        Rel = new[] {"self"},
-                        Href = Request.GetAbsoluteAddress()
-                    },
-                    new Link
-                    {
-                        Rel = new[] {"items"},
-                        Href = new Uri(Request.GetBaseAddress(), "items")
-                    }
+                    Rel = new[] {"self"},
+                    Href = Request.GetAbsoluteAddress()
+                },
+                new Link
+                {
+                    Rel = new[] {"items"},
+                    Href = new Uri(Request.GetBaseAddress(), "items")
                 }
             };
         }

@@ -11,13 +11,13 @@ namespace Api.Controllers
         [HttpGet]
         public Entity Get()
         {
-            return new BasketModule(Request).BuildEntity();
+            return new BasketModule(Request).Handle();
         }
 
         [HttpPost]
         public Entity Post(BasketAddModel model)
         {
-            return new BasketModule(Request).BuildEntity(model);
+            return new BasketModule(Request).Handle(model);
         }
     }
 }
