@@ -79,21 +79,9 @@ namespace Api.Modules
         {
             return new[]
             {
-                new Link
-                {
-                    Rel = new[] {"self"},
-                    Href = new Uri(BaseAddress, $"/items/{Id}")
-                },
-                new Link
-                {
-                    Rel = new[] {"items"},
-                    Href = new Uri(BaseAddress, "/items")
-                },
-                new Link
-                {
-                    Rel = new[] {"basket"},
-                    Href = new Uri(BaseAddress, "/basket")
-                }
+                LinkFactory.Create("item", Id, true),
+                LinkFactory.Create("items", false),
+                LinkFactory.Create("basket", false)
             };
         }
     }

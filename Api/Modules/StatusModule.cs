@@ -44,11 +44,7 @@ namespace Api.Modules
         {
             return new[]
             {
-                new Link
-                {
-                    Rel = new[] {"self"},
-                    Href = new Uri(BaseAddress, "/status")
-                }
+                LinkFactory.Create("status", true)
             };
         }
     }

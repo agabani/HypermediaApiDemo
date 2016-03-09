@@ -1,8 +1,6 @@
-using System;
 using Api.Siren;
 using Api.ValueObjects;
 using Microsoft.AspNet.Http;
-using Action = Api.Siren.Action;
 
 namespace Api.Modules
 {
@@ -19,13 +17,11 @@ namespace Api.Modules
 
         protected override Link[] BuildLinks()
         {
+            var linkFactory = LinkFactory;
+
             return new[]
             {
-                new Link
-                {
-                    Rel = new[] {"self"},
-                    Href = new Uri(BaseAddress, $"/items/{Id}")
-                }
+                linkFactory.Create("item", Id, true)
             };
         }
     }

@@ -1,5 +1,4 @@
-﻿using System;
-using Api.Siren;
+﻿using Api.Siren;
 using Microsoft.AspNet.Http;
 
 namespace Api.Modules
@@ -34,26 +33,10 @@ namespace Api.Modules
         {
             return new[]
             {
-                new Link
-                {
-                    Rel = new[] {"self"},
-                    Href = BaseAddress
-                },
-                new Link
-                {
-                    Rel = new[] {"items"},
-                    Href = new Uri(BaseAddress, "/items")
-                },
-                new Link
-                {
-                    Rel = new[] {"basket"},
-                    Href = new Uri(BaseAddress, "/basket")
-                },
-                new Link
-                {
-                    Rel = new[] {"status"},
-                    Href = new Uri(BaseAddress, "/status")
-                }
+                LinkFactory.Create("root", true),
+                LinkFactory.Create("items", false),
+                LinkFactory.Create("basket", false),
+                LinkFactory.Create("status", false)
             };
         }
     }

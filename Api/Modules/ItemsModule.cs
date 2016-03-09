@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using Api.Repositories;
@@ -42,16 +41,8 @@ namespace Api.Modules
         {
             return new[]
             {
-                new Link
-                {
-                    Rel = new[] {"self"},
-                    Href = new Uri(BaseAddress, "/items")
-                },
-                new Link
-                {
-                    Rel = new[] {"basket"},
-                    Href = new Uri(BaseAddress, "/basket")
-                }
+                LinkFactory.Create("items", true),
+                LinkFactory.Create("basket", false)
             };
         }
     }
