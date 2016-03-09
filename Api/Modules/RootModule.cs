@@ -13,13 +13,11 @@ namespace Api.Modules
 
         public Entity Handle()
         {
-            var baseAddress = Request.GetBaseAddress();
-
             return new Entity
             {
                 Class = BuildClass(),
                 Entities = BuildEntities(),
-                Links = BuildLinks(baseAddress)
+                Links = BuildLinks()
             };
         }
 
@@ -33,14 +31,16 @@ namespace Api.Modules
             return new Entity[] {};
         }
 
-        private Link[] BuildLinks(Uri baseAddress)
+        private Link[] BuildLinks()
         {
+            var baseAddress = Request.GetBaseAddress();
+
             return new[]
             {
                 new Link
                 {
                     Rel = new[] {"self"},
-                    Href = Request.GetAbsoluteAddress()
+                    Href = baseAddress
                 },
                 new Link
                 {
@@ -49,7 +49,7 @@ namespace Api.Modules
                 },
                 new Link
                 {
-                    Rel = new []{"basket"},
+                    Rel = new[] {"basket"},
                     Href = new Uri(baseAddress, "/basket")
                 },
                 new Link
