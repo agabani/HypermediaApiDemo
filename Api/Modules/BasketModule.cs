@@ -24,11 +24,8 @@ namespace Api.Modules
 
         public Entity Handle(BasketAddModel model)
         {
-            StringValues stringValues;
-
-            var account = Request.Headers.TryGetValue("authorization", out stringValues)
-                ? AccountRepository.GetByToken(Guid.Parse(stringValues.First().Split(' ').Last()))
-                : AccountRepository.CreateAnonymous();
+            Account account;
+            var isExistingAccount = TryGetAccount(out account);
 
             var basket = BasketRepository.Get(account);
             basket.AddItem(ItemRepository.Get(model.Id));
@@ -38,18 +35,15 @@ namespace Api.Modules
             {
                 Class = BuildClass(),
                 Properties = BuildProperties(basket),
-                Entities = BuildEntities(basket, account, stringValues != default(StringValues)),
+                Entities = BuildEntities(basket, account, isExistingAccount),
                 Links = BuildLinks()
             };
         }
 
         public Entity Handle()
         {
-            StringValues stringValues;
-
-            var account = Request.Headers.TryGetValue("authorization", out stringValues)
-                ? AccountRepository.GetByToken(Guid.Parse(stringValues.First().Split(' ').Last()))
-                : AccountRepository.CreateAnonymous();
+            Account account;
+            TryGetAccount(out account);
 
             var basket = BasketRepository.Get(account);
 
@@ -60,6 +54,17 @@ namespace Api.Modules
                 Entities = BuildEntities(basket),
                 Links = BuildLinks()
             };
+        }
+
+        private bool TryGetAccount(out Account account)
+        {
+            StringValues stringValues;
+
+            account = Request.Headers.TryGetValue("authorization", out stringValues)
+                ? AccountRepository.GetByToken(Guid.Parse(stringValues.First().Split(' ').Last()))
+                : AccountRepository.CreateAnonymous();
+
+            return stringValues != default(StringValues);
         }
 
         private Entity[] BuildEntities(Basket basket, Account account, bool isAuthenticated)
