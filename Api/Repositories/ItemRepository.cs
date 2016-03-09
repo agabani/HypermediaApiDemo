@@ -14,7 +14,7 @@ namespace Api.Repositories
             new Item("D", new Money("GBP", 15d))
         };
 
-        public IEnumerable<Item> Get()
+        public IReadOnlyCollection<Item> Get()
         {
             return Items;
         }
