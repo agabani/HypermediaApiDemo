@@ -10,7 +10,7 @@ namespace Api.Controllers
         [HttpGet]
         public Entity Get()
         {
-            return new RootModule(Request).BuildEntity();
+            return new RootModule(Request).Handle();
         }
     }
 }

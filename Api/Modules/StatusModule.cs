@@ -12,7 +12,7 @@ namespace Api.Modules
         {
         }
 
-        public Entity BuildEntity()
+        public Entity Handle()
         {
             return new Entity
             {

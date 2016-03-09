@@ -71,7 +71,7 @@ namespace Api.Modules
         {
             var entities = basket.Items
                 .Select(item => item.Id)
-                .Select(itemId => new AnemicItemModule(Request, itemId).BuildEntity())
+                .Select(itemId => new AnemicItemModule(Request, itemId).Handle())
                 .ToArray();
 
             var httpEntity = new Entity
@@ -90,7 +90,7 @@ namespace Api.Modules
         {
             return basket.Items
                 .Select(item => item.Id)
-                .Select(s => new AnemicItemModule(Request, s).BuildEntity())
+                .Select(s => new AnemicItemModule(Request, s).Handle())
                 .ToArray();
         }
 

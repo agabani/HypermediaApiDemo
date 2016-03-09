@@ -11,7 +11,7 @@ namespace Api.Modules
         {
         }
 
-        public Entity BuildEntity()
+        public Entity Handle()
         {
             var baseAddress = Request.GetBaseAddress();
 

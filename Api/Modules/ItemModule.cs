@@ -22,7 +22,7 @@ namespace Api.Modules
             Id = id;
         }
 
-        public Entity BuildEntity()
+        public Entity Handle()
         {
             var item = ItemRepository.Get(Id);
 

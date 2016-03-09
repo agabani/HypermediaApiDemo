@@ -17,7 +17,7 @@ namespace Api.Modules
         {
         }
 
-        public Entity BuildEntity()
+        public Entity Handle()
         {
             var items = _itemRepository.Get();
 
@@ -37,7 +37,7 @@ namespace Api.Modules
         private Entity[] BuildEntities(IEnumerable<Item> items)
         {
             return items
-                .Select(item => new AnemicItemModule(Request, item.Id).BuildEntity()).ToArray();
+                .Select(item => new AnemicItemModule(Request, item.Id).Handle()).ToArray();
         }
 
         private Link[] BuildLinks()
