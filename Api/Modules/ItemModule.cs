@@ -53,11 +53,9 @@ namespace Api.Modules
 
         protected virtual Action[] BuildActions(Item item)
         {
-            var actionFactory = new ActionFactory(BaseAddress);
-
             return new[]
             {
-                actionFactory.Create("basket", "post", item)
+                ActionFactory.Create("basket", "post", item)
             };
         }
 
