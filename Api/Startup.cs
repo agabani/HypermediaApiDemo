@@ -24,6 +24,8 @@ namespace Api
         public void ConfigureServices(IServiceCollection services)
         {
             // Add framework services.
+            services.AddCors();
+
             services
                 .AddMvc()
                 .AddJsonOptions(
@@ -42,6 +44,10 @@ namespace Api
             app.UseIISPlatformHandler();
 
             app.UseStaticFiles();
+
+            app.UseCors(builder => builder
+                .WithOrigins(@"http://localhost:12127")
+                .WithMethods("GET", "POST", "HEAD"));
 
             app.UseMvc();
         }
