@@ -1,4 +1,5 @@
-﻿using Api.Siren;
+﻿using System.Collections.Generic;
+using Api.Siren;
 using Microsoft.AspNet.Http;
 
 namespace Api.Modules
@@ -14,6 +15,7 @@ namespace Api.Modules
             return new Entity
             {
                 Class = BuildClass(),
+                Properties = BuildProperties(),
                 Entities = BuildEntities(),
                 Links = BuildLinks()
             };
@@ -22,6 +24,11 @@ namespace Api.Modules
         private static string[] BuildClass()
         {
             return new[] {"root"};
+        }
+
+        private static Dictionary<string, dynamic> BuildProperties()
+        {
+            return new Dictionary<string, dynamic>();
         }
 
         private static Entity[] BuildEntities()

@@ -30,6 +30,12 @@ namespace Api.Tests.Acceptance
         }
 
         [Test]
+        public void Root_contains_no_properties()
+        {
+            Assert.That(_entity.Properties, Is.Empty);
+        }
+
+        [Test]
         public void Root_links_to_self()
         {
             Assert.That(_entity
