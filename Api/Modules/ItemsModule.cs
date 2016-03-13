@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using Api.Builders;
 using Api.Repositories;
@@ -21,15 +20,11 @@ namespace Api.Modules
             return new EntityBuilder()
                 .WithClass("items")
                 .WithClass("collection")
-                .WithEntity(BuildItems().Select<Entity, Func<Entity>>(entity => () => entity))
+                .WithEntity(_itemRepository.Get()
+                    .Select(item => new AnemicItemModule(Request, item.Id).Handle())
+                    .Select<Entity, Func<Entity>>(entity => () => entity))
                 .WithLink(() => LinkFactory.Create("items", true))
                 .WithLink(() => LinkFactory.Create("basket", false)).Build();
-        }
-
-        private IEnumerable<Entity> BuildItems()
-        {
-            return _itemRepository.Get()
-                .Select(item => new AnemicItemModule(Request, item.Id).Handle());
         }
     }
 }
