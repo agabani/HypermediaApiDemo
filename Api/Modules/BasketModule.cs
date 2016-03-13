@@ -55,14 +55,14 @@ namespace Api.Modules
 
         private Entity BuildEntity(Basket basket, Account account)
         {
-            return new EntityBuilder()
+            var buildEntity = new EntityBuilder()
                 .WithClass("basket")
                 .WithClass("collection")
                 .WithProperty("price", Checkout.GetTotal(basket).Units)
-                .WithEntity(BuildEntities(basket, account).Select<Entity, Func<Entity>>(e => () => e))
                 .WithLink(() => LinkFactory.Create("basket", true))
-                .WithLink(() => LinkFactory.Create("items", false))
-                .Build();
+                .WithLink(() => LinkFactory.Create("items", false));
+
+            return WithSubEntities(buildEntity, basket, account).Build();
         }
 
         private Account GetAccount()
@@ -74,20 +74,18 @@ namespace Api.Modules
                 : AccountRepository.CreateAnonymous();
         }
 
-        private IEnumerable<Entity> BuildEntities(Basket basket, Account account)
+        private EntityBuilder WithSubEntities(EntityBuilder entityBuilder, Basket basket, Account account)
         {
-            var builder = new EntityBuilder();
-
             if (!Request.Headers.ContainsKey("authorization"))
             {
-                builder.WithEntity(() =>
+                entityBuilder.WithEntity(() =>
                     new EntityBuilder()
                         .WithClass("http")
                         .WithProperty("authorization", $"Basic {account.Token}")
                         .Build());
             }
 
-            builder
+            entityBuilder
                 .WithEntity(basket.Items
                     .Select(item => item.Id)
                     .Select(id => new BasketItemModule(Request, id).Handle())
@@ -100,7 +98,7 @@ namespace Api.Modules
                     })
                     .Select<Entity, Func<Entity>>(entity => () => entity));
 
-            return builder.Build().Entities;
+            return entityBuilder;
         }
     }
 }
