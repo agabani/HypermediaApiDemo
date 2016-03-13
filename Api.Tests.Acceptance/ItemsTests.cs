@@ -51,6 +51,18 @@ namespace Api.Tests.Acceptance
         }
 
         [Test]
+        public void Items_contains_no_properties()
+        {
+            Assert.That(_entity.Properties, Is.Empty);
+        }
+
+        [Test]
+        public void Items_contains_no_actions()
+        {
+            Assert.That(_entity.Actions, Is.Empty);
+        }
+
+        [Test]
         [TestCase("A", 50d)]
         [TestCase("B", 30d)]
         [TestCase("C", 20d)]
@@ -63,6 +75,8 @@ namespace Api.Tests.Acceptance
                 .Entities.Single(entity => entity.Properties.Contains(new KeyValuePair<string, dynamic>("id", id)));
 
             Assert.That(item.Class.Contains("item"));
+            Assert.That(item.Entities, Is.Empty);
+            Assert.That(item.Actions, Is.Empty);
 
             var link = item.Links.Single();
 

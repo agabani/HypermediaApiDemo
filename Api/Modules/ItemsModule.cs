@@ -1,8 +1,9 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using Api.Builders;
 using Api.Repositories;
 using Api.Siren;
-using Api.ValueObjects;
 using Microsoft.AspNet.Http;
 
 namespace Api.Modules
@@ -17,33 +18,18 @@ namespace Api.Modules
 
         public Entity Handle()
         {
-            var items = _itemRepository.Get();
-
-            return new Entity
-            {
-                Class = BuildClass(),
-                Entities = BuildEntities(items),
-                Links = BuildLinks()
-            };
+            return new EntityBuilder()
+                .WithClass("items")
+                .WithClass("collection")
+                .WithEntity(BuildItems().Select<Entity, Func<Entity>>(entity => () => entity))
+                .WithLink(() => LinkFactory.Create("items", true))
+                .WithLink(() => LinkFactory.Create("basket", false)).Build();
         }
 
-        private static string[] BuildClass()
+        private IEnumerable<Entity> BuildItems()
         {
-            return new[] {"items", "collection"};
-        }
-
-        private Entity[] BuildEntities(IEnumerable<Item> items)
-        {
-            return items.Select(item => new AnemicItemModule(Request, item.Id).Handle()).ToArray();
-        }
-
-        private Link[] BuildLinks()
-        {
-            return new[]
-            {
-                LinkFactory.Create("items", true),
-                LinkFactory.Create("basket", false)
-            };
+            return _itemRepository.Get()
+                .Select(item => new AnemicItemModule(Request, item.Id).Handle());
         }
     }
 }

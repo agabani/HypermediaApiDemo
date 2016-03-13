@@ -12,7 +12,7 @@ namespace Api.Modules
 
         protected override Action[] BuildActions(Item item)
         {
-            return null;
+            return new Action[]{};
         }
 
         protected override Link[] BuildLinks()

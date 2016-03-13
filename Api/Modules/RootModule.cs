@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+﻿using Api.Builders;
 using Api.Siren;
 using Microsoft.AspNet.Http;
 
@@ -12,39 +12,13 @@ namespace Api.Modules
 
         public Entity Handle()
         {
-            return new Entity
-            {
-                Class = BuildClass(),
-                Properties = BuildProperties(),
-                Entities = BuildEntities(),
-                Links = BuildLinks()
-            };
-        }
-
-        private static string[] BuildClass()
-        {
-            return new[] {"root"};
-        }
-
-        private static Dictionary<string, dynamic> BuildProperties()
-        {
-            return new Dictionary<string, dynamic>();
-        }
-
-        private static Entity[] BuildEntities()
-        {
-            return new Entity[] {};
-        }
-
-        private Link[] BuildLinks()
-        {
-            return new[]
-            {
-                LinkFactory.Create("root", true),
-                LinkFactory.Create("items", false),
-                LinkFactory.Create("basket", false),
-                LinkFactory.Create("status", false)
-            };
+            return new EntityBuilder()
+                .WithClass("root")
+                .WithLink(() => LinkFactory.Create("root", true))
+                .WithLink(() => LinkFactory.Create("items", false))
+                .WithLink(() => LinkFactory.Create("basket", false))
+                .WithLink(() => LinkFactory.Create("status", false))
+                .Build();
         }
     }
 }
