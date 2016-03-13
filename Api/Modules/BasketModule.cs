@@ -8,7 +8,6 @@ using Api.Siren;
 using Api.ViewModels;
 using Microsoft.AspNet.Http;
 using Microsoft.Extensions.Primitives;
-using Action = Api.Siren.Action;
 
 namespace Api.Modules
 {
@@ -32,14 +31,14 @@ namespace Api.Modules
             basket.AddItem(ItemRepository.Get(model.Id));
             BasketRepository.Save(account, basket);
 
-            return new Entity
-            {
-                Class = BuildClass(),
-                Properties = BuildProperties(basket),
-                Entities = BuildEntities(basket, account, isExistingAccount),
-                Links = BuildLinks(),
-                Actions = new Action[] {}
-            };
+            return new EntityBuilder()
+                .WithClass("basket")
+                .WithClass("collection")
+                .WithProperty("price", Checkout.GetTotal(basket).Units)
+                .WithEntity(BuildEntities(basket, account, isExistingAccount).Select<Entity, Func<Entity>>(e => () => e))
+                .WithLink(() => LinkFactory.Create("basket", true))
+                .WithLink(() => LinkFactory.Create("items", false))
+                .Build();
         }
 
         public Entity Handle()
@@ -49,14 +48,14 @@ namespace Api.Modules
 
             var basket = BasketRepository.Get(account);
 
-            return new Entity
-            {
-                Class = BuildClass(),
-                Properties = BuildProperties(basket),
-                Entities = BuildEntities(basket),
-                Links = BuildLinks(),
-                Actions = new Action[] { }
-            };
+            return new EntityBuilder()
+                .WithClass("basket")
+                .WithClass("collection")
+                .WithProperty("price", Checkout.GetTotal(basket).Units)
+                .WithEntity(BuildEntities(basket).Select<Entity, Func<Entity>>(e => () => e))
+                .WithLink(() => LinkFactory.Create("basket", true))
+                .WithLink(() => LinkFactory.Create("items", false))
+                .Build();
         }
 
         private bool TryGetAccount(out Account account)
@@ -70,7 +69,7 @@ namespace Api.Modules
             return stringValues != default(StringValues);
         }
 
-        private Entity[] BuildEntities(Basket basket, Account account, bool isAuthenticated)
+        private IEnumerable<Entity> BuildEntities(Basket basket, Account account, bool isAuthenticated)
         {
             var entities = basket.Items
                 .Select(item => item.Id)
@@ -89,34 +88,12 @@ namespace Api.Modules
             return isAuthenticated ? entities : new[] {httpEntity}.Concat(entities).ToArray();
         }
 
-        private Entity[] BuildEntities(Basket basket)
+        private IEnumerable<Entity> BuildEntities(Basket basket)
         {
             return basket.Items
                 .Select(item => item.Id)
                 .Select(s => new AnemicItemModule(Request, s).Handle())
                 .ToArray();
-        }
-
-        private static string[] BuildClass()
-        {
-            return new[] {"basket", "collection"};
-        }
-
-        private static Dictionary<string, dynamic> BuildProperties(Basket basket)
-        {
-            return new Dictionary<string, dynamic>
-            {
-                {"price", Checkout.GetTotal(basket).Units}
-            };
-        }
-
-        private Link[] BuildLinks()
-        {
-            return new[]
-            {
-                LinkFactory.Create("basket", true),
-                LinkFactory.Create("items", false)
-            };
         }
     }
 }
