@@ -24,5 +24,10 @@ namespace Api.DomainObjects
         {
             _items.Add(item);
         }
+
+        public void RemoveItem(Item item)
+        {
+            _items.Remove(item);
+        }
     }
 }

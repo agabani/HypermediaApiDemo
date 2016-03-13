@@ -42,6 +42,17 @@ namespace Api.Modules
             return BuildEntity(basket, account);
         }
 
+        public Entity Handle(string itemId)
+        {
+            var account = GetAccount();
+
+            var basket = BasketRepository.Get(account);
+            basket.RemoveItem(basket.Items.First(item => item.Id == itemId));
+            BasketRepository.Save(account, basket);
+
+            return BuildEntity(basket, account);
+        }
+
         private Entity BuildEntity(Basket basket, Account account)
         {
             return new EntityBuilder()
@@ -79,7 +90,7 @@ namespace Api.Modules
             builder
                 .WithEntity(basket.Items
                     .Select(item => item.Id)
-                    .Select(id => new AnemicItemModule(Request, id).Handle())
+                    .Select(id => new BasketItemModule(Request, id).Handle())
                     .GroupBy(item => item.Properties["id"])
                     .Select(grouping =>
                     {

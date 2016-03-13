@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using Api.Tests.Acceptance.Siren;
-using Api.Tests.Acceptance.Siren.Pocos;
 using NUnit.Framework;
+using Action = Api.Tests.Acceptance.Siren.Pocos.Action;
 
 namespace Api.Tests.Acceptance
 {
@@ -108,16 +108,17 @@ namespace Api.Tests.Acceptance
             for (var i = 0; i < 3; i++)
             {
                 _sirenHttpJourney
-                .FollowLink(l => l.Rel.Contains("items"))
-                .FollowEntityLink(e => e.Properties.Contains(new KeyValuePair<string, dynamic>("id", "A")))
-                .FollowAction(a => a.Name.Equals("basket-add"));
+                    .FollowLink(l => l.Rel.Contains("items"))
+                    .FollowEntityLink(e => e.Properties.Contains(new KeyValuePair<string, dynamic>("id", "A")))
+                    .FollowAction(a => a.Name.Equals("basket-add"));
             }
 
             var entity = _sirenHttpJourney
+                .FollowEntityAction(e => e.Properties["id"] == "A", a => a.Name == "basket-remove")
                 .Travel()
                 .Entities.Single(e => e.Properties["id"] == "A");
 
-            Assert.That(entity.Properties["quantity"], Is.EqualTo(3));
+            Assert.That(entity.Properties["quantity"], Is.EqualTo(2));
         }
 
         [Test]

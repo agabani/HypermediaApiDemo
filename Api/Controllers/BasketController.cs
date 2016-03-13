@@ -19,5 +19,11 @@ namespace Api.Controllers
         {
             return new BasketModule(Request).Handle(model);
         }
+
+        [HttpDelete("{id}")]
+        public Entity Delete(string id)
+        {
+            return new BasketModule(Request).Handle(id);
+        }
     }
 }

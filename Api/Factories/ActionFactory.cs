@@ -47,6 +47,14 @@ namespace Api.Factories
                         },
                         Title = "Add to basket"
                     };
+                case "delete":
+                    return new Action
+                    {
+                        Name = "basket-remove",
+                        Href = new Uri(_baseAddress, $"/basket/{((Item)@object).Id}"),
+                        Method = "DELETE",
+                        Title = "Remove from basket"
+                    };
                 default:
                     throw new NotImplementedException();
             }

@@ -53,6 +53,7 @@
     <Compile Include="ItemsTests.cs" />
     <Compile Include="Siren\Journeys\IJourney.cs" />
     <Compile Include="Siren\Journeys\JourneyAction.cs" />
+    <Compile Include="Siren\Journeys\JourneyEntityAction.cs" />
     <Compile Include="Siren\Journeys\JourneyEntityLink.cs" />
     <Compile Include="Siren\Journeys\JourneyLink.cs" />
     <Compile Include="Tests.cs" />

@@ -34,6 +34,12 @@ namespace Api.Tests.Acceptance.Siren
             return this;
         }
 
+        public SirenHttpJourney FollowEntityAction(Func<Entity, bool> predicateEntity, Func<Action, bool> predicateAction)
+        {
+            _links.Add(new JourneyEntityAction(predicateEntity, predicateAction));
+            return this;
+        }
+
         public SirenHttpJourney FollowEntityLink(Func<Entity, bool> predicate)
         {
             _links.Add(new JourneyEntityLink(predicate));

@@ -49,7 +49,7 @@ namespace Api
                 .WithOrigins(@"http://localhost:5001")
                 .WithOrigins(@"http://192.168.1.67:5001")
                 .WithHeaders("authorization", "content-type")
-                .WithMethods("GET", "POST", "HEAD"));
+                .WithMethods("GET", "POST", "HEAD", "DELETE"));
 
             app.UseMvc();
         }

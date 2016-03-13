@@ -39,6 +39,11 @@ namespace Api.Tests.Acceptance.Siren
                     .Select(kvp => new KeyValuePair<string, string>(kvp.Key, kvp.Value.ToString())))).Result);
         }
 
+        public Entity Delete(Uri uri)
+        {
+            return ToEntity(_httpClient.DeleteAsync(uri).Result);
+        }
+
         private Entity ToEntity(HttpResponseMessage httpResponseMessage)
         {
             var entity = JsonConvert.DeserializeObject<Entity>(httpResponseMessage
