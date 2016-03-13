@@ -24,6 +24,7 @@ namespace Api.Modules
                 .WithProperty("id", item.Id)
                 .WithProperty("value", item.Value.Units)
                 .WithLink(() => LinkFactory.Create("item", _id, true))
+                .WithAction(() => ActionFactory.Create("basket", "post", item))
                 .Build();
         }
     }

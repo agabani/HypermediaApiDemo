@@ -77,7 +77,6 @@ namespace Api.Tests.Acceptance
 
             Assert.That(item.Class.Contains("item"));
             Assert.That(item.Entities, Is.Empty);
-            Assert.That(item.Actions, Is.Empty);
 
             var link = item.Links.Single();
 
@@ -85,6 +84,17 @@ namespace Api.Tests.Acceptance
             Assert.That(link.Href, Is.EqualTo(new Uri(BaseAddress, $"items/{id}")));
 
             Assert.That(item.Properties["value"], Is.EqualTo(value));
+
+            var action = item.Actions.Single();
+
+            Assert.That(action.Href, Is.EqualTo(new Uri(BaseAddress, "basket")));
+            Assert.That(action.Fields.Single().Name, Is.EqualTo("id"));
+            Assert.That(action.Fields.Single().Type, Is.EqualTo("hidden"));
+            Assert.That(action.Fields.Single().Value, Is.EqualTo(id));
+            Assert.That(action.Method, Is.EqualTo("POST"));
+            Assert.That(action.Name, Is.EqualTo("basket-add"));
+            Assert.That(action.Title, Is.EqualTo("Add to basket"));
+            Assert.That(action.Type, Is.EqualTo("application/x-www-form-urlencoded"));
         }
     }
 }
