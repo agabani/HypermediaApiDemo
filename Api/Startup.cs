@@ -46,7 +46,7 @@ namespace Api
             app.UseStaticFiles();
 
             app.UseCors(builder => builder
-                .WithOrigins(@"http://localhost:12127")
+                .WithOrigins(@"http://localhost:5001")
                 .WithMethods("GET", "POST", "HEAD"));
 
             app.UseMvc();
