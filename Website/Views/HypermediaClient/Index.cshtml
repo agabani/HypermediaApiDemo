@@ -5,64 +5,69 @@
 
 <!-- ko if: viewModel.response() !== undefined -->
 
-<div data-bind="template: {name: 'entity-template', data: viewModel.response() }"></div>
+<div class="row">
+    <div class="col-md-12" data-bind="template: {name: 'entity-template', data: viewModel.response() }">
+        
+    </div>
+</div>
 
 <!-- /ko -->
 
 <script type="text/html" id="entity-template">
-    <div class="row well">
+
+    @* Class *@
+    <div class="row">
         <div class="col-md-12">
-
-            @* Class *@
-            <div class="row">
-                <div class="col-md-12">
-                    <h2>Classes</h2>
-                    <ul data-bind="foreach: $data.class">
-                        <li data-bind="text: $data"></li>
-                    </ul>
-                </div>
-            </div>
-
-            @* Properties *@
-            <div class="row">
-                <div class="col-md-12">
-                    <h2>Properties</h2>
-                    <hr/>
-                    <table class="table">
-                        <thead>
-                        <tr>
-                            <th>Key</th>
-                            <th>Value</th>
-                        </tr>
-                        </thead>
-                        <tbody data-bind="foreachprop: $data.properties">
-                        <tr>
-                            <td data-bind="text: $data.key"></td>
-                            <td data-bind="text: $data.value"></td>
-                        </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-            @* Entities *@
-            <!-- ko foreach: $data.entities -->
-            <div data-bind="template: {name: 'entity-template', data: $data}"></div>
-            <!-- /ko -->
-
-            @* Links *@
-            <div class="row">
-                <div class="col-md-12">
-                    <h2>Links</h2>
-                    <hr/>
-                    <div class="row" data-bind="foreach: $data.links">
-                        <div class="col-md-3">
-                            <a data-bind="click: followLink.bind($data, $parent)"><span data-bind="text: rel"></span> : <span data-bind="text: href"></span></a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
+            <h2>Classes</h2>
+            <ul data-bind="foreach: $data.class">
+                <li data-bind="text: $data"></li>
+            </ul>
         </div>
     </div>
+
+    @* Properties *@
+    <div class="row">
+        <div class="col-md-12">
+            <h2>Properties</h2>
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>Key</th>
+                    <th>Value</th>
+                </tr>
+                </thead>
+                <tbody data-bind="foreachprop: $data.properties">
+                <tr>
+                    <td data-bind="text: $data.key"></td>
+                    <td data-bind="text: $data.value"></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    @* Entities *@
+    <div class="row">
+        <div class="col-md-12">
+            <h2>Entities</h2>
+        </div>
+        <!-- ko foreach: $data.entities -->
+        <div class="col-md-4 well">
+            <div data-bind="template: {name: 'entity-template', data: $data}"></div>
+        </div>
+        <!-- /ko -->
+    </div>
+
+    @* Links *@
+    <div class="row">
+        <div class="col-md-12">
+            <h2>Links</h2>
+            <div class="row" data-bind="foreach: $data.links">
+                <div class="col-md-2">
+                    <a data-bind="click: followLink.bind($data, $parent)"><span data-bind="text: rel"></span></a>
+                </div>
+            </div>
+        </div>
+    </div>
+
 </script>
