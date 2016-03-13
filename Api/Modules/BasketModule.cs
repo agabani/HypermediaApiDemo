@@ -55,14 +55,14 @@ namespace Api.Modules
 
         private Entity BuildEntity(Basket basket, Account account)
         {
-            var buildEntity = new EntityBuilder()
+            var entityBuilder = new EntityBuilder()
                 .WithClass("basket")
                 .WithClass("collection")
                 .WithProperty("price", Checkout.GetTotal(basket).Units)
                 .WithLink(() => LinkFactory.Create("basket", true))
                 .WithLink(() => LinkFactory.Create("items", false));
 
-            return WithSubEntities(buildEntity, basket, account).Build();
+            return WithSubEntities(entityBuilder, basket, account).Build();
         }
 
         private Account GetAccount()
