@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using Api.Tests.Acceptance.Siren;
+using Api.Tests.Acceptance.Siren.Pocos;
 using NUnit.Framework;
 
 namespace Api.Tests.Acceptance
@@ -15,7 +16,7 @@ namespace Api.Tests.Acceptance
         [OneTimeSetUp]
         public new void OneTimeSetUp()
         {
-            var sirenJourney = new SirenJourney(new SirenHttpClient(new HttpClient
+            var sirenJourney = new SirenHttpJourney(new SirenHttpClient(new HttpClient
             {
                 BaseAddress = BaseAddress
             }));

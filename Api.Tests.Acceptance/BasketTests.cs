@@ -13,22 +13,22 @@ namespace Api.Tests.Acceptance
         [SetUp]
         public void SetUp()
         {
-            _sirenJourney = new SirenJourney(new SirenHttpClient(new HttpClient {BaseAddress = BaseAddress}));
+            _sirenHttpJourney = new SirenHttpJourney(new SirenHttpClient(new HttpClient {BaseAddress = BaseAddress}));
         }
 
         [TearDown]
         public void TearDown()
         {
-            _sirenJourney.Dispose();
-            _sirenJourney = null;
+            _sirenHttpJourney.Dispose();
+            _sirenHttpJourney = null;
         }
 
-        private SirenJourney _sirenJourney;
+        private SirenHttpJourney _sirenHttpJourney;
 
         [Test]
         public void Add_to_basket_and_provides_anonymous_account()
         {
-            var entity = _sirenJourney
+            var entity = _sirenHttpJourney
                 .FollowLink(l => l.Rel.Contains("items"))
                 .FollowEntityLink(e => e.Properties.Contains(new KeyValuePair<string, dynamic>("id", "A")))
                 .FollowAction(a => a.Name.Equals("basket-add"))
@@ -58,7 +58,7 @@ namespace Api.Tests.Acceptance
         [Test]
         public void Authenticated_request_should_not_show_http_class()
         {
-            var entity = _sirenJourney
+            var entity = _sirenHttpJourney
                 .FollowLink(l => l.Rel.Contains("items"))
                 .FollowEntityLink(e => e.Properties.Contains(new KeyValuePair<string, dynamic>("id", "A")))
                 .FollowAction(a => a.Name.Equals("basket-add"))
@@ -90,13 +90,13 @@ namespace Api.Tests.Acceptance
         {
             foreach (var item in items)
             {
-                _sirenJourney
+                _sirenHttpJourney
                     .FollowLink(l => l.Rel.Contains("items"))
                     .FollowEntityLink(e => e.Properties.Contains(new KeyValuePair<string, dynamic>("id", item.ToString())))
                     .FollowAction(a => a.Name.Equals("basket-add"));
             }
 
-            var entity = _sirenJourney.Travel();
+            var entity = _sirenHttpJourney.Travel();
 
             Assert.That(entity.Properties["price"], Is.EqualTo(expectedPrice));
         }
@@ -104,7 +104,7 @@ namespace Api.Tests.Acceptance
         [Test]
         public void Empty_basket_has_price()
         {
-            var entity = _sirenJourney
+            var entity = _sirenHttpJourney
                 .FollowLink(l => l.Rel.Contains("basket"))
                 .Travel();
 

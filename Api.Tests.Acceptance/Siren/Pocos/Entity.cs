@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Api.Tests.Acceptance.Siren
+namespace Api.Tests.Acceptance.Siren.Pocos
 {
     internal class Entity
     {

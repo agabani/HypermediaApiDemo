@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
+using Api.Tests.Acceptance.Siren.Pocos;
 using Newtonsoft.Json;
 
 namespace Api.Tests.Acceptance.Siren

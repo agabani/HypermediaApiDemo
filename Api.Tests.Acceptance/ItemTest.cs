@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using Api.Tests.Acceptance.Siren;
+using Api.Tests.Acceptance.Siren.Pocos;
 using NUnit.Framework;
 
 namespace Api.Tests.Acceptance
@@ -13,7 +14,7 @@ namespace Api.Tests.Acceptance
         [SetUp]
         public void SetUp()
         {
-            _sirenJourney = new SirenJourney(new SirenHttpClient(new HttpClient
+            _sirenHttpJourney = new SirenHttpJourney(new SirenHttpClient(new HttpClient
             {
                 BaseAddress = BaseAddress
             }))
@@ -23,12 +24,12 @@ namespace Api.Tests.Acceptance
         [TearDown]
         public void TearDown()
         {
-            _sirenJourney.Dispose();
-            _sirenJourney = null;
+            _sirenHttpJourney.Dispose();
+            _sirenHttpJourney = null;
         }
 
         private Entity _entity;
-        private SirenJourney _sirenJourney;
+        private SirenHttpJourney _sirenHttpJourney;
 
         [Test]
         [TestCase("A", 50d)]
@@ -37,7 +38,7 @@ namespace Api.Tests.Acceptance
         [TestCase("D", 15d)]
         public void Item_Test(string id, double value)
         {
-            _entity = _sirenJourney
+            _entity = _sirenHttpJourney
                 .FollowEntityLink(entity => entity.Properties.Contains(new KeyValuePair<string, dynamic>("id", id)))
                 .Travel();
 

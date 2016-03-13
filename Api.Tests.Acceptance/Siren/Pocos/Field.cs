@@ -1,4 +1,4 @@
-﻿namespace Api.Tests.Acceptance.Siren
+﻿namespace Api.Tests.Acceptance.Siren.Pocos
 {
     internal class Field
     {

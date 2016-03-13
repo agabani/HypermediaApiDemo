@@ -51,15 +51,19 @@
     <Compile Include="BasketTests.cs" />
     <Compile Include="ItemTest.cs" />
     <Compile Include="ItemsTests.cs" />
+    <Compile Include="Siren\Journeys\IJourney.cs" />
+    <Compile Include="Siren\Journeys\JourneyAction.cs" />
+    <Compile Include="Siren\Journeys\JourneyEntityLink.cs" />
+    <Compile Include="Siren\Journeys\JourneyLink.cs" />
     <Compile Include="Tests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RootTests.cs" />
-    <Compile Include="Siren\Action.cs" />
-    <Compile Include="Siren\Entity.cs" />
-    <Compile Include="Siren\Field.cs" />
-    <Compile Include="Siren\Link.cs" />
+    <Compile Include="Siren\Pocos\Action.cs" />
+    <Compile Include="Siren\Pocos\Entity.cs" />
+    <Compile Include="Siren\Pocos\Field.cs" />
+    <Compile Include="Siren\Pocos\Link.cs" />
     <Compile Include="Siren\SirenHttpClient.cs" />
-    <Compile Include="Siren\SirenJourney.cs" />
+    <Compile Include="Siren\SirenHttpJourney.cs" />
     <Compile Include="StatusTests.cs" />
   </ItemGroup>
   <ItemGroup>
