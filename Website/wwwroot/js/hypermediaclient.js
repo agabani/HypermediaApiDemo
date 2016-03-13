@@ -36,9 +36,36 @@ function followLink(data, link) {
     });
 }
 
+function followAction(data, action) {
+    console.log(action);
+
+    $.ajax({
+        url: action.href,
+        headers: viewModel.headers,
+        method: action.method,
+        data: transformRequest(action.fields),
+        contentType: action.type,
+        success: handleSuccessResponse,
+        fail: handleFailResponse
+    });
+}
+
+function transformRequest(fields) {
+    var fieldsArray = [];
+
+    for (var index in fields) {
+        if (fields.hasOwnProperty(index)) {
+            var field = fields[index];
+
+            fieldsArray.push(field.name + "=" + field.value);
+        }
+    }
+
+    return fieldsArray.join("&");
+}
+
 function handleSuccessResponse(data) {
     handleHttpClass(data);
-
     viewModel.response(data);
 }
 
