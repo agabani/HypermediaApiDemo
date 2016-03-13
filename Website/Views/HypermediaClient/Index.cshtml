@@ -4,73 +4,78 @@
 }
 
 <!-- ko if: viewModel.response() !== undefined -->
-
 <div class="row">
-    <div class="col-md-12" data-bind="template: {name: 'entity-template', data: viewModel.response() }">
-        
-    </div>
+    <div class="col-md-12" data-bind="template: {name: 'class-template', data: viewModel.response().class}"></div>
+    <div class="col-md-12" data-bind="template: {name: 'properties-template', data: viewModel.response().properties}"></div>
+    <div class="col-md-12" data-bind="template: {name: 'entities-template', data: viewModel.response().entities}"></div>
+    <div class="col-md-12" data-bind="template: {name: 'actions-template', data: viewModel.response().actions}"></div>
+    <div class="col-md-12" data-bind="template: {name: 'links-template', data: viewModel.response().links}"></div>
 </div>
-
 <!-- /ko -->
 
-<script type="text/html" id="entity-template">
-
-    @* Class *@
+<script type="text/html" id="class-template">
     <div class="row">
         <div class="col-md-12">
             <h2>Classes</h2>
-            <ul data-bind="foreach: $data.class">
+            <ul data-bind="foreach: $data">
                 <li data-bind="text: $data"></li>
             </ul>
         </div>
     </div>
+</script>
 
-    @* Properties *@
+<script type="text/html" id="properties-template">
     <div class="row">
         <div class="col-md-12">
             <h2>Properties</h2>
             <table class="table">
                 <thead>
-                <tr>
-                    <th>Key</th>
-                    <th>Value</th>
-                </tr>
+                    <tr>
+                        <th>Key</th>
+                        <th>Value</th>
+                    </tr>
                 </thead>
-                <tbody data-bind="foreachprop: $data.properties">
-                <tr>
-                    <td data-bind="text: $data.key"></td>
-                    <td data-bind="text: $data.value"></td>
-                </tr>
+                <tbody data-bind="foreachprop: $data">
+                    <tr>
+                        <td data-bind="text: $data.key"></td>
+                        <td data-bind="text: $data.value"></td>
+                    </tr>
                 </tbody>
             </table>
         </div>
     </div>
+</script>
 
-    @* Entities *@
+<script type="text/html" id="entities-template">
     <div class="row">
         <div class="col-md-12">
             <h2>Entities</h2>
+            <!-- ko foreach: $data -->
+            <div class="row well">
+                <div class="col-md-2" data-bind="template: {name: 'class-template', data: $data.class}"></div>
+                <div class="col-md-2" data-bind="template: {name: 'properties-template', data: $data.properties}"></div>
+                <div class="col-md-4" data-bind="template: {name: 'actions-template', data: $data.actions}"></div>
+                <div class="col-md-4" data-bind="template: {name: 'links-template', data: $data.links}"></div>
+                <div class="col-md-12" data-bind="template: {name: 'entities-template', data: $data.entities}"></div>
+            </div>
+            <!-- /ko -->
         </div>
-        <!-- ko foreach: $data.entities -->
-        <div class="col-md-4 well">
-            <div data-bind="template: {name: 'entity-template', data: $data}"></div>
-        </div>
-        <!-- /ko -->
     </div>
+</script>
 
-    @* Actions *@
+<script type="text/html" id="actions-template">
     <div class="row">
         <div class="col-md-12">
             <h2>Actions</h2>
         </div>
-        <!-- ko foreach: $data.actions -->
+        <!-- ko foreach: $data -->
         <div class="col-md-12">
             <div>
                 <!-- ko foreach: $data.fields -->
                 <div class="form-group">
                     <label data-bind="text: $data.name"></label>
                     <!-- ko if: $data.type === "text" -->
-                    <input class="form-control" type="text" data-bind="value: $data.value"/>
+                    <input class="form-control" type="text" data-bind="value: $data.value" />
                     <!-- /ko -->
                 </div>
                 <!-- /ko -->
@@ -79,17 +84,19 @@
         </div>
         <!-- /ko -->
     </div>
+</script>
 
-    @* Links *@
+<script type="text/html" id="links-template">
     <div class="row">
         <div class="col-md-12">
             <h2>Links</h2>
-            <div class="row" data-bind="foreach: $data.links">
+            <div class="row" data-bind="foreach: $data">
                 <div class="col-md-2">
-                    <a data-bind="click: followLink.bind($data, $parent)"><span data-bind="text: rel"></span></a>
+                    <a data-bind="click: followLink.bind($data, $parent)">
+                        <span data-bind="text: rel"></span>
+                    </a>
                 </div>
             </div>
         </div>
     </div>
-
 </script>
