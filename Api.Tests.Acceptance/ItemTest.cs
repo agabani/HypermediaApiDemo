@@ -92,7 +92,7 @@ namespace Api.Tests.Acceptance
 
             Assert.That(action.Href, Is.EqualTo(new Uri(BaseAddress, "basket")));
             Assert.That(action.Fields.Single().Name, Is.EqualTo("id"));
-            Assert.That(action.Fields.Single().Type, Is.EqualTo("text"));
+            Assert.That(action.Fields.Single().Type, Is.EqualTo("hidden"));
             Assert.That(action.Fields.Single().Value, Is.EqualTo(id));
             Assert.That(action.Method, Is.EqualTo("POST"));
             Assert.That(action.Name, Is.EqualTo("basket-add"));

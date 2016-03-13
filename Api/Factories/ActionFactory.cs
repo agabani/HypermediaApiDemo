@@ -40,7 +40,7 @@ namespace Api.Factories
                         {
                             new Field
                             {
-                                Type = "text",
+                                Type = "hidden",
                                 Name = "id",
                                 Value = ((Item) @object).Id
                             }
