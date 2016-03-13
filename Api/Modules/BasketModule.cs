@@ -59,7 +59,7 @@ namespace Api.Modules
             StringValues stringValues;
 
             return Request.Headers.TryGetValue("authorization", out stringValues)
-                ? AccountRepository.GetByToken(Guid.Parse(stringValues.First().Split(' ').Last()))
+                ? AccountRepository.GetByToken(Guid.Parse(stringValues.Single().Split(' ').Last()))
                 : AccountRepository.CreateAnonymous();
         }
 
