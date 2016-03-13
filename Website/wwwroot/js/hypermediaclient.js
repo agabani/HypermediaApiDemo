@@ -21,7 +21,8 @@ ko.bindingHandlers.foreachprop = {
 ko.virtualElements.allowedBindings.foreachproperty = true;
 
 var viewModel = {
-    response: ko.observable()
+    response: ko.observable(),
+    headers: {}
 };
 
 ko.applyBindings(viewModel);
@@ -29,23 +30,44 @@ ko.applyBindings(viewModel);
 function followLink(data, link) {
     $.ajax({
         url: link.href,
-        success: loadResponse,
-        fail: logResponse
+        headers: viewModel.headers,
+        success: handleSuccessResponse,
+        fail: handleFailResponse
     });
 }
 
-function loadResponse(data) {
+function handleSuccessResponse(data) {
+    handleHttpClass(data);
+
     viewModel.response(data);
 }
 
-function logResponse(data) {
+function handleHttpClass(data) {
+    for (var entity in data.entities) {
+        if (data.entities.hasOwnProperty(entity)) {
+            if ($.inArray("http", data.entities[entity].class) >= 0) {
+                addHttpHeadersToViewModel(data.entities[entity]);
+            }
+        }
+    }
+}
+
+function addHttpHeadersToViewModel(data) {
+    for (var property in data.properties) {
+        if (data.properties.hasOwnProperty(property)) {
+            viewModel.headers[property] = data.properties[property];
+        }
+    }
+}
+
+function handleFailResponse(data) {
     console.log(data);
 };
 
-(function () {
+(function() {
     $.ajax({
         url: "http://localhost:5000",
-        success: loadResponse,
-        fail: logResponse
+        success: handleSuccessResponse,
+        fail: handleFailResponse
     });
 }());
