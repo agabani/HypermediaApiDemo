@@ -24,7 +24,8 @@ namespace Api.Modules
                     .Select(item => new AnemicItemModule(Request, item.Id).Handle())
                     .Select<Entity, Func<Entity>>(entity => () => entity))
                 .WithLink(() => LinkFactory.Create("items", true))
-                .WithLink(() => LinkFactory.Create("basket", false)).Build();
+                .WithLink(() => LinkFactory.Create("basket", false))
+                .Build();
         }
     }
 }
