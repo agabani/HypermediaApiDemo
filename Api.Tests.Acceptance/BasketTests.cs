@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using Api.Tests.Acceptance.Siren;
+using Api.Tests.Acceptance.Siren.Pocos;
 using NUnit.Framework;
 
 namespace Api.Tests.Acceptance
@@ -99,6 +100,24 @@ namespace Api.Tests.Acceptance
             var entity = _sirenHttpJourney.Travel();
 
             Assert.That(entity.Properties["price"], Is.EqualTo(expectedPrice));
+        }
+
+        [Test]
+        public void Basket_should_group_items_by_id()
+        {
+            for (var i = 0; i < 3; i++)
+            {
+                _sirenHttpJourney
+                .FollowLink(l => l.Rel.Contains("items"))
+                .FollowEntityLink(e => e.Properties.Contains(new KeyValuePair<string, dynamic>("id", "A")))
+                .FollowAction(a => a.Name.Equals("basket-add"));
+            }
+
+            var entity = _sirenHttpJourney
+                .Travel()
+                .Entities.Single(e => e.Properties["id"] == "A");
+
+            Assert.That(entity.Properties["quantity"], Is.EqualTo(3));
         }
 
         [Test]

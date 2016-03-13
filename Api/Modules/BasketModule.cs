@@ -80,6 +80,13 @@ namespace Api.Modules
                 .WithEntity(basket.Items
                     .Select(item => item.Id)
                     .Select(id => new AnemicItemModule(Request, id).Handle())
+                    .GroupBy(item => item.Properties["id"])
+                    .Select(grouping =>
+                    {
+                        var entity = grouping.First();
+                        entity.Properties["quantity"] = grouping.Count();
+                        return entity;
+                    })
                     .Select<Entity, Func<Entity>>(entity => () => entity));
 
             return builder.Build().Entities;
