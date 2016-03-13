@@ -8,7 +8,7 @@ namespace Api.Builders
 {
     public class EntityBuilder
     {
-        private readonly List<System.Func<Action>> _actions = new List<System.Func<Action>>();
+        private readonly List<Func<Action>> _actions = new List<Func<Action>>();
         private readonly List<string> _class = new List<string>();
         private readonly List<Func<Entity>> _entityBuilders = new List<Func<Entity>>();
         private readonly List<Func<Link>> _links = new List<Func<Link>>();

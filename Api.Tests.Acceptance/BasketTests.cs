@@ -4,7 +4,6 @@ using System.Linq;
 using System.Net.Http;
 using Api.Tests.Acceptance.Siren;
 using NUnit.Framework;
-using Action = Api.Tests.Acceptance.Siren.Pocos.Action;
 
 namespace Api.Tests.Acceptance
 {
