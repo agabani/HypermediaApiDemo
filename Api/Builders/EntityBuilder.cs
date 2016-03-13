@@ -56,6 +56,12 @@ namespace Api.Builders
             return this;
         }
 
+        public EntityBuilder WithLink(IEnumerable<Func<Link>> links)
+        {
+            _links.AddRange(links);
+            return this;
+        }
+
         public EntityBuilder WithAction(Func<Action> action)
         {
             _actions.Add(action);

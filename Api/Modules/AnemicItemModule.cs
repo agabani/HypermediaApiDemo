@@ -1,28 +1,30 @@
+using Api.Builders;
+using Api.Repositories;
 using Api.Siren;
-using Api.ValueObjects;
 using Microsoft.AspNet.Http;
 
 namespace Api.Modules
 {
-    public class AnemicItemModule : ItemModule
+    public class AnemicItemModule : Module
     {
-        public AnemicItemModule(HttpRequest request, string id) : base(request, id)
+        private static readonly ItemRepository ItemRepository = new ItemRepository();
+        private readonly string _id;
+
+        public AnemicItemModule(HttpRequest request, string id) : base(request)
         {
+            _id = id;
         }
 
-        protected override Action[] BuildActions(Item item)
+        public Entity Handle()
         {
-            return new Action[]{};
-        }
+            var item = ItemRepository.Get(_id);
 
-        protected override Link[] BuildLinks()
-        {
-            var linkFactory = LinkFactory;
-
-            return new[]
-            {
-                linkFactory.Create("item", Id, true)
-            };
+            return new EntityBuilder()
+                .WithClass("item")
+                .WithProperty("id", item.Id)
+                .WithProperty("value", item.Value.Units)
+                .WithLink(() => LinkFactory.Create("item", _id, true))
+                .Build();
         }
     }
 }

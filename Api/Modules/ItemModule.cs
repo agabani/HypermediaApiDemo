@@ -1,7 +1,6 @@
-using System.Collections.Generic;
+using Api.Builders;
 using Api.Repositories;
 using Api.Siren;
-using Api.ValueObjects;
 using Microsoft.AspNet.Http;
 
 namespace Api.Modules
@@ -9,62 +8,26 @@ namespace Api.Modules
     public class ItemModule : Module
     {
         private static readonly ItemRepository ItemRepository = new ItemRepository();
-        protected readonly string Id;
+        private readonly string _id;
 
         public ItemModule(HttpRequest request, string id) : base(request)
         {
-            Id = id;
+            _id = id;
         }
 
         public Entity Handle()
         {
-            var item = ItemRepository.Get(Id);
+            var item = ItemRepository.Get(_id);
 
-            return new Entity
-            {
-                Class = BuildClass(),
-                Properties = BuildProperties(item),
-                Entities = BuildEntities(),
-                Links = BuildLinks(),
-                Actions = BuildActions(item)
-            };
-        }
-
-        private static string[] BuildClass()
-        {
-            return new[] {"item"};
-        }
-
-        private static Dictionary<string, dynamic> BuildProperties(Item item)
-        {
-            return new Dictionary<string, dynamic>
-            {
-                {"id", item.Id},
-                {"value", item.Value.Units}
-            };
-        }
-
-        private static Entity[] BuildEntities()
-        {
-            return new Entity[] {};
-        }
-
-        protected virtual Action[] BuildActions(Item item)
-        {
-            return new[]
-            {
-                ActionFactory.Create("basket", "post", item)
-            };
-        }
-
-        protected virtual Link[] BuildLinks()
-        {
-            return new[]
-            {
-                LinkFactory.Create("item", Id, true),
-                LinkFactory.Create("items", false),
-                LinkFactory.Create("basket", false)
-            };
+            return new EntityBuilder()
+                .WithClass("item")
+                .WithProperty("id", item.Id)
+                .WithProperty("value", item.Value.Units)
+                .WithLink(() => LinkFactory.Create("item", _id, true))
+                .WithLink(() => LinkFactory.Create("items", false))
+                .WithLink(() => LinkFactory.Create("basket", false))
+                .WithAction(() => ActionFactory.Create("basket", "post", item))
+                .Build();
         }
     }
 }
