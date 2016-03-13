@@ -37,6 +37,8 @@ namespace Api.Tests.Acceptance
             Assert.That(entity.Class.Contains("basket"));
             Assert.That(entity.Class.Contains("collection"));
 
+            Assert.That(entity.Actions, Is.Empty);
+
             Assert.That(entity
                 .Links.Single(link => link.Rel.Contains("self"))
                 .Href,
@@ -73,6 +75,8 @@ namespace Api.Tests.Acceptance
             Assert.That(entity
                 .Entities.Any(e => e.Class.Contains("http")),
                 Is.False);
+
+            Assert.That(entity.Actions, Is.Empty);
         }
 
         [Test]

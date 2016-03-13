@@ -1,12 +1,14 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Api.Builders;
 using Api.DomainObjects;
 using Api.Repositories;
 using Api.Siren;
 using Api.ViewModels;
 using Microsoft.AspNet.Http;
 using Microsoft.Extensions.Primitives;
+using Action = Api.Siren.Action;
 
 namespace Api.Modules
 {
@@ -35,7 +37,8 @@ namespace Api.Modules
                 Class = BuildClass(),
                 Properties = BuildProperties(basket),
                 Entities = BuildEntities(basket, account, isExistingAccount),
-                Links = BuildLinks()
+                Links = BuildLinks(),
+                Actions = new Action[] {}
             };
         }
 
@@ -51,7 +54,8 @@ namespace Api.Modules
                 Class = BuildClass(),
                 Properties = BuildProperties(basket),
                 Entities = BuildEntities(basket),
-                Links = BuildLinks()
+                Links = BuildLinks(),
+                Actions = new Action[] { }
             };
         }
 
